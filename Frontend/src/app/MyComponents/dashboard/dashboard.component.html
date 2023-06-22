@@ -1,0 +1,10 @@
+<section class="background-image login">
+  <section style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+    <div>
+      <h1 style="text-align: center">Welcome {{ user?.name }}</h1>
+      <p style="text-align: center">Your email id: {{ user?.email }}</p>
+      <p style="text-align: center">Your number: {{ user?.phone }}</p>
+      <button mat-raised-button type="button" class="custom-button" (click)="logout()">Logout</button>
+    </div>
+  </section>
+</section>

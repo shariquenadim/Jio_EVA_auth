@@ -11,12 +11,17 @@ app.use(cookieParser());
 // Set up static files
 app.use(express.static("public"));
 
+// Connect to MongoDB
+// I have to change the mongoDB atlas string, and set it to .env file before production 
 mongoose.connect("mongodb+srv://ryan:ryan@cluster0.zwg3v3g.mongodb.net/?retryWrites=true&w=majority", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-mongoose.connection.on("error", console.error.bind(console, "MongoDB connection error:"));
+mongoose.connection.on("error", (err) => {
+  console.error("MongoDB connection error:", err);
+});
+
 mongoose.connection.once("open", () => {
   console.log("Connected to MongoDB");
 });
@@ -24,13 +29,14 @@ mongoose.connection.once("open", () => {
 // Set up routes
 app.use("/", routes);
 
-// Set up error handling
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).send("Something went wrong!");
 });
 
 // Start the server
-app.listen(3000, () => {
-  console.log("Server started on port 3000");
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server started on port ${port}`);
 });

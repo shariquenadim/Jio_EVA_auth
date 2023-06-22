@@ -4,15 +4,16 @@ const nodemailer = require("nodemailer");
 const User = require("./models/user");
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+const redis = require("redis");
 
 const router = express.Router();
 
+// Constants
 const JWT_SECRET = "8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmpgXwovR9fp6ryDIoGRM8EPHAB6iHsc0fb";
+// I have to set this in .env file before production
 const OTP_SECRET = "2o8Mky6F9DfwvM9J8Us1a46pTz";
 
-const redis = require("redis");
-
-// Initialize redis client
+// Initialize Redis client
 const redisClient = redis.createClient({
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT,
@@ -27,8 +28,9 @@ redisClient.on("error", (err) => {
   console.error("Redis error", err);
 });
 
-
+// CORS configuration
 const allowedOrigins = ['http://localhost:4200', 'http://localhost'];
+// add the hosting url also for production
 
 router.use(cors({
   origin: function (origin, callback) {
@@ -40,6 +42,7 @@ router.use(cors({
   },
   credentials: true,
 }));
+
 // Cookie parser middleware
 router.use(cookieParser());
 
@@ -55,8 +58,8 @@ router.post("/signup", async (req, res, next) => {
     const existingUser = await User.findOne({ $or: [{ email }, { phone }] });
 
     if (existingUser) {
-      console.log("User already exists")
-      return res.status(400).json("User already exist");
+      console.log("User already exists");
+      return res.status(400).json("User already exists");
     }
 
     const user = new User({
@@ -71,6 +74,7 @@ router.post("/signup", async (req, res, next) => {
     // Send verification email
     const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "1d" });
     const url = `http://localhost:3000/verify-email?token=${token}`;
+    // change the url according to the production
 
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
@@ -85,12 +89,13 @@ router.post("/signup", async (req, res, next) => {
       from: "infomotiveofficial@gmail.com",
       to: email,
       subject: "Verify your Email ID for JIO EVA",
-      html: `Click <strong><a href="${url}">here</a></strong> to verify your email address. <br> Please don't share this mail with others.`,
+      html: `Click <strong><a href="${url}">here</a></strong> to verify your email address. <br> Please don't share this email with others.`,
     });
 
     res.status(201).json({ status: 201, message: "User created successfully" });
   } catch (err) {
-    next(err);
+    console.error(err);
+    res.status(500).json({ message: "An error occurred during signup" });
   }
 });
 
@@ -112,11 +117,12 @@ router.get("/verify-email", async (req, res, next) => {
 
     res.json("Email verified successfully");
   } catch (err) {
-    next(err);
+    console.error(err);
+    res.status(500).json({ message: "An error occurred during email verification" });
   }
 });
 
-// login route
+// Login route
 router.post("/login", async (req, res, next) => {
   console.log('Login route called');
   try {
@@ -125,39 +131,37 @@ router.post("/login", async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      console.log("User not found.")
-      return res.status(400).json("User not found.");
+      console.log("User not found.");
+      return res.status(400).json("User not found");
     }
 
     if (!user.emailVerified) {
-      console.log("Email address not verified")
+      console.log("Email address not verified");
       return res.status(400).json("Email address not verified");
     }
-    
 
     user.comparePassword(password, async (err, isMatch) => {
       if (err || !isMatch) {
-        console.log("Invalid email or password")
+        console.log("Invalid email or password");
         return res.status(400).json("Invalid email or password");
       }
-      
 
       // Generate OTP code
       const otp = Math.floor(100000 + Math.random() * 900000);
 
-      // Store OTP code in database
+      // Store OTP code in Redis database
       const timestamp = Date.now();
+      const otpKey = `otp:${email}`;
+
+      redisClient.set(otpKey, otp.toString(), "EX", 120); // Set OTP with a 2-minute expiration time
 
       // Set rememberMe option if true
       if (rememberMe) {
         res.cookie("rememberMe", rememberMe.toString(), { httpOnly: true });
       }
 
-      res.cookie("otp", otp.toString(), { httpOnly: true });
-      res.cookie("timestamp", timestamp.toString(), { httpOnly: true });
       res.cookie("email", email.toString(), { httpOnly: true });
-      console.log("OTP:", otp);
-      console.log(req.cookies);
+
       const transporter = nodemailer.createTransport({
         host: "smtp.gmail.com",
         service: "Gmail",
@@ -166,7 +170,7 @@ router.post("/login", async (req, res, next) => {
           pass: "ipuszobdyygbwapv",
         },
       });
-  
+
       await transporter.sendMail({
         from: "infomotiveofficial@gmail.com",
         to: email,
@@ -174,40 +178,58 @@ router.post("/login", async (req, res, next) => {
         html: `Your new OTP code is <strong>${otp}</strong>. This OTP is active only for 2 minutes.`,
       });
 
-      res.status(200).json({ message: "An otp has been sent to your email" });
+      res.status(200).json({ message: "An OTP has been sent to your email" });
     });
   } catch (err) {
-    next(err);
+    console.error(err);
+    res.status(500).json({ message: "An error occurred during login" });
   }
 });
 
+// OTP verification route
 router.post('/otp', async (req, res) => {
   const { otp } = req.body;
-
-  // Find user in database
-  const prevOtp = req.cookies.otp;
-  const timestamp = req.cookies.timestamp;
   const email = req.cookies.email;
-  console.log(prevOtp, otp)
-  // Check if OTP is valid
-  if (otp !== prevOtp) {
-    console.log("Invalid OTP")
-    return res.status(401).json({ message: 'Invalid OTP' });
-  }
+  const otpKey = `otp:${email}`;
 
-  // Check if OTP is expired
-  const now = Date.now();
-  if (now - timestamp > 2 * 60 * 1000) {
-    console.log("OTP expired")
-    return res.status(401).json({ message: 'OTP expired' });
-  }
+  try {
+    redisClient.get(otpKey, (err, prevOtp) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: "An error occurred during OTP verification" });
+      }
 
-  const token = jwt.sign({ email: email }, JWT_SECRET, { expiresIn: "1d" });
-  res.cookie("token", token, { httpOnly: true });
-  // Successful login
-  res.status(200).json({ token, message: 'Login successful' });
+      // Check if OTP is valid
+      if (otp !== prevOtp) {
+        console.log("Invalid OTP");
+        return res.status(401).json({ message: 'Invalid OTP' });
+      }
+
+      // Check if OTP is expired
+      const now = Date.now();
+      redisClient.ttl(otpKey, (err, ttl) => {
+        if (err) {
+          console.error(err);
+          return res.status(500).json({ message: "An error occurred during OTP verification" });
+        }
+
+        if (ttl === -2 || now - ttl > 2 * 60 * 1000) {
+          console.log("OTP expired");
+          return res.status(401).json({ message: 'OTP expired' });
+        }
+
+        const token = jwt.sign({ email: email }, JWT_SECRET, { expiresIn: "1d" });
+        res.cookie("token", token, { httpOnly: true });
+
+        // Successful login
+        res.status(200).json({ token, message: 'Login successful' });
+      });
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "An error occurred during OTP verification" });
+  }
 });
-
 
 // Logout route
 router.post("/logout", (req, res) => {
@@ -232,7 +254,7 @@ router.get("/me", async (req, res, next) => {
 
     const { email } = decoded;
 
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(401).json("User does not exist");
@@ -240,7 +262,8 @@ router.get("/me", async (req, res, next) => {
 
     res.json(user);
   } catch (err) {
-    next(err);
+    console.error(err);
+    res.status(500).json({ message: "An error occurred while fetching user details" });
   }
 });
 

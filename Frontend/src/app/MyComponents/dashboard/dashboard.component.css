@@ -1,0 +1,6 @@
+.custom-button {
+    background-color: #fcb542 !important;
+    color: white !important;
+    border-radius: 50px; /* Adjust the value as needed to achieve the desired semi-circle shape */
+    width: 100%;
+  }
