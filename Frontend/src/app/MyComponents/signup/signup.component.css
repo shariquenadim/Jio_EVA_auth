@@ -1,67 +1,76 @@
-/* You can add global styles to this file, and also import other style files */
-
-html,
-body {
-  height: 100%;
-  width: 100%;
-}
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #212529;
-  text-align: left;
-  /* background-color: #fff; */
-}
-body {
-  font-family: jio-medium, sans-serif;
-  padding: 0;
-  /* background: #fff; */
-  -webkit-font-smoothing: antialiased;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-}
-
-.alcx {
-  background-size: 100%;
-  height: 100%;
-  background-position: bottom left;
-}
-
-.alcc {
-  min-height: 90%;
-  max-height: 90%;
-  overflow-y: auto;
+.background-image.signup {
+  position: fixed;
   top: 0;
   left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -1;
 }
-.alc {
-  margin-top: 0;
-  top: 0;
-  width: 25%;
+
+.background-image.signup:before {
+  content: "";
+  background-image: url("../../../assets/registration-bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
   position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.container {
+  position: relative;
+  padding: 10px;
+  overflow-y: auto;
+  height: auto;
+  width: 100%;
+}
+
+.alc {
+  width: 27%;
+  position: relative;
+  height: auto;
+  max-height: 90%;
+  margin: 0 auto;
+  padding: 10px;
+  margin-bottom: auto;
 }
 
 .jioeva_logo {
-  width: 9rem;
-  margin: 1rem auto;
-  padding-bottom: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 35%;
+  margin: 0.5rem auto;
 }
-img {
-  vertical-align: middle;
-  border-style: none;
+
+.jioeva_logo img {
   max-width: 100%;
-  max-height: 100%;
+  height: auto;
+}
+
+.error-head {
+  padding-left: 20px;
+  font-size: medium;
+}
+.nu {
+  margin: 4% 0;
+  justify-content: center;
+  display: flex;
+  font-size: 0.8em;
+  color: #656565;
+}
+
+form {
+  margin-top: 0;
+  display: block;
+}
+
+.signup-frm {
+  padding: 3px;
 }
 .prefix-container {
   display: flex;
@@ -72,106 +81,8 @@ img {
   margin-right: 8px;
 }
 
-form {
-  display: block;
-  margin-top: 0em;
-}
-
-.nu {
-  margin: 10% 0;
-  justify-content: center;
-}
-.nu {
-  display: flex;
-  font-size: 0.8em;
-  color: #707070;
-}
-
-.nu {
-  margin-right: 10px;
-}
-label {
-  display: inline-block;
-  margin-bottom: 0.5rem;
-}
-.link {
-  color: #ffad29;
-}
-a {
-  text-decoration: none;
-  background-color: transparent;
-}
-
-/* .authenticate-layout-container[_ngcontent-xad-c1]
-  .jio-footer[_ngcontent-xad-c1] {
-  position: relative;
-  min-height: 100vh;
-  margin-left: auto;
-  margin-right: auto;
-  min-height: 3%;
-  left: 0;
-  right: 0;
-  bottom: 1px;
-} */
-
-.authenticate-layout-container {
-  position: relative; /* Make the container relative */
-  min-height: 100vh; /* Ensure the container takes up at least the full viewport height */
-}
-
-.jio-footer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 40px; /* Set the desired height for the footer */
-}
-
-article,
-aside,
-figcaption,
-figure,
-footer,
-header,
-hgroup,
-main,
-nav,
-section {
-  display: block;
-}
-
-.center[_ngcontent-xad-c1] {
-  margin-left: 47%;
-}
-
-img {
-  vertical-align: middle;
-  border-style: none;
-}
-img,
-video {
-  max-width: 100%;
-  max-height: 100%;
-}
-
-.link[_ngcontent-xad-c1] {
-  color: grey;
-  float: right;
-  font-size: 13px;
-  margin-right: 1%;
-}
-
-a {
-  text-decoration: none;
-  background-color: transparent;
-}
-.prefix-container {
-  display: flex;
-  align-items: center;
-}
-
-.prefix-container span {
-  margin-right: 0px;
+::ng-deep .password-error{
+  margin-top: -25px;
 }
 
 .button-container {
@@ -182,6 +93,57 @@ a {
 .custom-button {
   background-color: #fcb542 !important;
   color: white !important;
-  border-radius: 50px; /* Adjust the value as needed to achieve the desired semi-circle shape */
-  width: 250px;
+  border-radius: 50px;
+  width: 65%;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  padding: 20px;
+}
+.disabled-btn {
+  background-color: #e0e0e0 !important;
+  color: #b1b1b1 !important;
+  border-radius: 50px;
+  width: 65%;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  padding: 20px;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.footer-container .link {
+  color: #ffffff;
+  font-size: 13px;
+  margin-left: 1%;
+  text-decoration: none;
+}
+
+.jio-footer {
+  position: fixed;
+  width: 100%;
+  background-color: transparent;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  bottom: 0;
+}
+
+.image-container {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  flex: 1;
+}
+
+.links-container {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+  margin-right: 2%;
 }

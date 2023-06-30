@@ -1,89 +1,104 @@
-<section class="background-image login">
-  <section class="alcx">
-    <section class="bg1">
-      <section class="alcc" style="min-height: 90%; max-height: 90%; overflow-y: auto; height: 90%">
-        <div class="alc" style="margin-top: 0%">
-          <header style="padding-top: 2%">
-            <!-- JioEVA logo -->
-            <div class="jioeva_logo">
-              <img alt="JioEVA logo" src="../assets/logo.png" />
-            </div>
-          </header>
+<div class="app-comp">
+  <div class="background-image login">
+    <div class="background-overlay"></div>
+    <div class="container">
+      <div class="alc">
+        <header>
+          <!-- JioEVA logo -->
+          <div class="jioeva_logo">
+            <img alt="JioEVA logo" src="../../../assets/logo.png" />
+          </div>
+        </header>
 
-          <section style="min-width: 190px; padding: auto">
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-              <!-- Email input -->
-              <mat-form-field style="width: 90%">
-                <mat-label>Email ID</mat-label>
-                <input type="email" matInput formControlName="email" required />
-                <mat-error
-                  *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)">
-                  Email is required or has an invalid format.
-                </mat-error>
-              </mat-form-field>
+        <section class="login-frm">
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Email input -->
+            <mat-form-field style="width: 99%">
+              <mat-label>Email ID</mat-label>
+              <input type="email" matInput formControlName="email" required />
+              <mat-error
+                *ngIf="loginForm.get('email')?.invalid && (loginForm.get('email')?.dirty || loginForm.get('email')?.touched)">
+                Email is required or has an invalid format.
+              </mat-error>
+            </mat-form-field>
 
-              <!-- Password input -->
-              <mat-form-field style="width: 90%">
-                <mat-label>Password</mat-label>
-                <input type="password" matInput formControlName="password" required />
-                <mat-error
-                  *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)">
-                  Password is required.
-                </mat-error>
-              </mat-form-field>
+            <!-- Password input -->
+            <mat-form-field style="width: 99%">
+              <mat-label>Password</mat-label>
+              <input type="password" matInput formControlName="password" required />
+              <mat-error
+                *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)">
+                Password is required.
+              </mat-error>
+            </mat-form-field>
 
-              <!-- Remember me checkbox -->
-              <div class="remember-forgot">
-                <mat-checkbox formControlName="rememberMe" class="remember-checkbox" style="color: #707070"
-                  (change)="onRememberMeChange($event)">Remember me</mat-checkbox>
-                <a class="forgot-link" href="#">Forgot password?</a>
-              </div>
-
-              <!-- Sign In button -->
-              <div class="button-container">
-                <button mat-raised-button type="submit" class="custom-button"
-                  [disabled]="!loginForm.valid && !showOTP">Sign In</button>
-              </div>
-            </form>
-
-            <!-- Display error message -->
-            <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
-
-            <!-- Rest of the HTML code -->
-
-
-            <!-- OTP form (displayed when showOTP is true) -->
-            <form [formGroup]="otpForm" *ngIf="showOTP">
-              <mat-form-field style="width: 90%; padding-top:0.7cm;">
-                <mat-label>Unique OTP</mat-label>
-                <input type="text" matInput formControlName="otp" />
-                <mat-error
-                  *ngIf="otpForm.get('otp')?.invalid && (otpForm.get('otp')?.dirty || otpForm.get('otp')?.touched)">
-                  OTP is required.
-                </mat-error>
-              </mat-form-field>
-
-              <!-- Countdown timer -->
-              <div class="timer" [ngClass]="{'red-text': isRedText}"><p>Time Remaining: {{ displayTime }}</p></div>
-
-              <!-- Verify OTP button -->
-              <div class="button-container">
-                <button mat-raised-button type="button" class="custom-button" (click)="onOtpSubmit()">Verify
-                  OTP</button>
-              </div>
-            </form>
-
-            <!-- Display email verification message -->
-            <div *ngIf="emailNotVerified">
-              <p>Email address not verified. Please check your email and verify your account.</p>
+            <!-- Remember me checkbox -->
+            <div class="remember-forgot">
+              <mat-checkbox formControlName="rememberMe" class="remember-checkbox" style="color: #707070"
+                (change)="onRememberMeChange($event)">Remember me</mat-checkbox>
+              <a class="forgot-link" href="#">Forgot password?</a>
             </div>
 
-            <div class="nu">
-              <label>New User?</label><a class="link" routerLink="/signup">Sign Up</a>
+            <!-- Sign In button -->
+            <div class="button-container">
+              <button mat-raised-button type="submit" class="custom-button"
+                [disabled]="!loginForm.valid && !showOTP" [ngClass]="{ 'disabled-btn': loginForm.invalid }">Sign In</button>
             </div>
-          </section>
+          </form>
+
+          <!-- Display error message -->
+          <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+
+          <!-- OTP form (displayed when showOTP is true) -->
+          <form [formGroup]="otpForm" *ngIf="showOTP">
+            <mat-form-field style="width: 90%; padding-top:0.7cm;">
+              <mat-label>Unique OTP</mat-label>
+              <input type="text" matInput formControlName="otp" />
+              <mat-error
+                *ngIf="otpForm.get('otp')?.invalid && (otpForm.get('otp')?.dirty || otpForm.get('otp')?.touched)">
+                OTP is required or has an invalid format.
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Countdown timer -->
+            <div class="timer" [ngClass]="{'red-text': isRedText}">
+              <p>Time Remaining: {{ displayTime }}</p>
+              <p *ngIf="isRedText">Time Over for OTP</p>
+            </div>
+
+            <!-- Verify OTP button -->
+            <div class="button-container">
+              <button mat-raised-button type="button" class="custom-button" (click)="onOtpSubmit()">Verify
+                OTP</button>
+            </div>
+          </form>
+
+          <!-- Display email verification message -->
+          <div *ngIf="emailNotVerified">
+            <p>Email address not verified. Please check your email and verify your account.</p>
+          </div>
+
+          <div class="nu">
+            <label>New User?</label> &nbsp;<a class="link" routerLink="/signup">Sign Up</a>
+          </div>
+        </section>
+      </div>
+      <footer class="jio-footer">
+        <div class="footer-container">
+          <div class="image-container">
+            <img _ngcontent-xad-c1="" alt="Powered by Jio" class="center" height="25"
+              src="../assets/jio-powered-by.png" />
+          </div>
+          <div class="links-container">
+            <a class="link" target="_blank" href="https://hellojiodiag.blob.core.windows.net/eva/PrivacyPolicy.pdf">
+              Privacy
+            </a>
+            <a class="link" target="_blank" href="https://hellojiodiag.blob.core.windows.net/eva/TnC.pdf">
+              Terms &amp; Conditions
+            </a>
+          </div>
         </div>
-      </section>
-    </section>
-  </section>
-</section>
+      </footer>
+    </div>
+  </div>
+</div>

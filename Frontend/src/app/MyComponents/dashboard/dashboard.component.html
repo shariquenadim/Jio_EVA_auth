@@ -1,10 +1,104 @@
-<section class="background-image login">
-  <section style="display: flex; justify-content: center; align-items: center; min-height: 100vh;">
-    <div>
-      <h1 style="text-align: center">Welcome {{ user?.name }}</h1>
-      <p style="text-align: center">Your email id: {{ user?.email }}</p>
-      <p style="text-align: center">Your number: {{ user?.phone }}</p>
-      <button mat-raised-button type="button" class="custom-button" (click)="logout()">Logout</button>
+<div class="dash-container">
+  <nav class="navbar">
+    <div class="logo">
+      <img src="../../../assets/jio-logo-white.png" class="img-logo" />
+    </div>
+    <div class="profile-dropdown">
+      <div class="profile" (click)="toggleDropdown()">
+        <mat-icon class="profile-img">{{ user?.name | slice:0:1 }}</mat-icon>
+      </div>
+      <div class="dropdown-content" [ngClass]="{ 'show': isDropdownOpen }">
+        <div class="user-details">
+          <div class="profile-name">
+            <h5 class="name-pro">{{ user?.name }}</h5>
+          </div>
+          <hr class="line" />
+          <div class="profile-info">
+            <span class="">{{ user?.email }}</span>
+          </div>
+          <div class="profile-info">
+            <span class="">{{ user?.phone }}</span>
+          </div>
+        </div>
+        <div class="logout-btn">
+          <button mat-raised-button type="button" class="logout-button" (click)="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+  <section class="container">
+    <h1 class="search-heading">Search Smart Cities of India</h1>
+    <div class="search-container">
+      <div class="search-wrapper" [ngClass]="{ 'rounded': isSuggestionListActive }">
+        <input type="text" class="search-bar" placeholder="Search smart cities of India..." [(ngModel)]="query"
+          (input)="searchCities(); toggleButtonVisibility()" #searchInput />
+        <div class="suggestion-list" *ngIf="isSuggestionListActive">
+          <mat-list>
+            <mat-list-item *ngFor="let city of recommendations" class="list-item"
+              (click)="selectCity(city.name, city.state)">
+              <p><i class="material-icons city-icon">location_city</i>
+                {{ city.name }}</p>
+            </mat-list-item>
+          </mat-list>
+        </div>
+      </div>
+      <div class="btn-go">
+        <button class="go-button" *ngIf="selectedCity" (click)="openCityDetailsPopup()"
+          [ngClass]="{ 'hidden': isButtonHidden }">{{ selectedCity }}</button>
+      </div>
     </div>
   </section>
-</section>
+</div>
+<!-- City Details Popup -->
+<div class="city-details-popup" *ngIf="isCityDetailsPopupOpen">
+  <div class="popup-content">
+    <div class="popup-heading">{{ selectedCity }}</div>
+    <h2>{{ selectedState }}</h2>
+    <div class="popup-info">
+      <div class="info-item">
+        <div class="info-label">Population:</div>
+        <div class="info-value">{{ cityPopulation }}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Latitude:</div>
+        <div class="info-value">{{ cityLatitude }}</div>
+        &nbsp; &nbsp;
+        <div class="info-label">Longitude:</div>
+        <div class="info-value">{{ cityLongitude }}</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Rating:</div>
+        <div class="info-value">3.5 / 5</div>
+        &nbsp; &nbsp;
+        <div class="info-label">Reviews:</div>
+        <div class="info-value">115</div>
+      </div>
+    </div>
+    <div class="popup-actions">
+      <button class="action-button" (click)="openMap()">Map</button>
+      <button class="action-button" (click)="closeCityDetailsPopup()">Close</button>
+    </div>
+    <br />
+    <hr style="color: aliceblue; width: 100%;" />
+    <div class="stars">
+      <span class="rate">
+        <i [style]="getStarStyles(1)" (click)="updateRating(1)">★</i>
+        <i [style]="getStarStyles(2)" (click)="updateRating(2)">★</i>
+        <i [style]="getStarStyles(3)" (click)="updateRating(3)">★</i>
+        <i [style]="getStarStyles(4)" (click)="updateRating(4)">★</i>
+        <i [style]="getStarStyles(5)" (click)="updateRating(5)">★</i>
+      </span>
+    </div>
+    <div class="review">
+      <div class="review-opt" *ngIf="showReview">
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Transportation') }" (click)="toggleReviewOption('Transportation')">Transportation</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Housing') }" (click)="toggleReviewOption('Housing')">Housing</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Weather') }" (click)="toggleReviewOption('Weather')">Weather</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Water') }" (click)="toggleReviewOption('Water')">Water</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Electricity') }" (click)="toggleReviewOption('Electricity')">Electricity</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Hygiene') }" (click)="toggleReviewOption('Hygiene')">Hygiene</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Safety') }" (click)="toggleReviewOption('Safety')">Safety</button>
+      </div>
+      <button class="review-btn" [disabled]="!isRatingSelected" [ngClass]="{'disabled-button': !isRatingSelected}" (click)="submitReview()">Submit</button>
+    </div>    
+  </div>

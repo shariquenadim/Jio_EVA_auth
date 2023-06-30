@@ -1,104 +1,132 @@
-<section class="background-image signup">
-  <section class="alcx">
-    <section class="bg1">
-      <section class="alcc" style="min-height: 90%; max-height: 90%; overflow-y: auto; height: 90%">
-        <div class="alc" style="margin-top: 0%">
-          <header style="padding-top: 2%">
-            <!-- JioEVA logo -->
-            <div class="jioeva_logo">
-              <img alt="JioEVA logo" src="../assets/logo.png" />
-            </div>
+<div class="app-comp">
+  <div class="background-image signup">
+    <div class="background-overlay"></div>
+    <div class="container">
+      <div class="alc">
+        <header>
+          <!-- JioEVA logo -->
+          <div class="jioeva_logo">
+            <img alt="JioEVA logo" src="../../../assets/logo.png" />
+          </div>
 
-            <!-- Display response messages -->
-            <div *ngIf="response">
-              <ng-container *ngIf="response.message === 'User created successfully'">
-                <h2>Almost done.</h2>
+          <!-- Display response messages -->
+          <div *ngIf="response">
+            <ng-container *ngIf="response.message === 'User created successfully'">
+              <div class="error-head">
+                <h2>Hey!</h2>
                 <p>Your account has been successfully created.</p>
-                <p>To proceed further, a confirmation link was sent to your Email ID for verification.</p>
-                <p>Click the attached link in your email to complete the verification process.</p>
-                <div class="nu">
-                  <label>Sign Up Completed? Click here to</label>
-                  <a class="link" routerLink="/login">Sign In</a>
-                </div>
-              </ng-container>
-              <ng-container *ngIf="response.message !== 'User created successfully' && response.message !== 'User already exists'">
-                <h2>Error:</h2>
-                <p>User already exists. Please sign in instead.</p>
-                <div class="nu">
-                  <label>Please login with the credentials. Click here to</label>
-                  <a class="link" routerLink="/login">Sign In</a>
-                </div>
-              </ng-container>
-            </div>
+              </div>
+              <div class="nu">
+                <label>Sign Up Completed? Click here to </label>&nbsp;
+                <a class="link" routerLink="/login">Sign In</a>
+              </div>
+            </ng-container>
+            <ng-container
+              *ngIf="response.message !== 'User created successfully' && response.message !== 'User already exists'">
+              <div class="error-head">
+                <h2>Hey!</h2>
+                <p>This user is already registered. Please sign in instead.</p>
+              </div>
+              <div class="nu">
+                <label>Please login with the credentials. Click here to </label>&nbsp;
+                <a class="link" routerLink="/login"> Sign In</a>
+              </div>
+            </ng-container>
+          </div>
+        </header>
+        <section class="signup-frm">
+          <!-- Sign Up form -->
+          <form [formGroup]="signupForm" (ngSubmit)="onSubmit()"
+            *ngIf="!response || response !== 'User created successfully'">
+            <!-- Name input -->
+            <mat-form-field style="width: 100%" class="flds">
+              <mat-label>Name</mat-label>
+              <input type="text" matInput formControlName="name" class="flds" required />
+            </mat-form-field>
 
-          </header>
+            <!-- Phone number input with validation -->
+            <mat-form-field style="width: 100%" class="flds">
+              <mat-label style="padding-left: 35px; font-size: 17px">Phone no</mat-label>
+              <div class="prefix-container">
+                <span matPrefix>+91</span>
+                <input matInput type="tel" formControlName="phoneNumber" class="flds" (keypress)="validatePhoneNumber($event)" />
+              </div>
+              <mat-error *ngIf="signupForm.controls['phoneNumber'].touched && signupForm.controls['phoneNumber'].invalid">
+                <ng-container *ngIf="signupForm.controls['phoneNumber'].hasError('required')">
+                  Phone number is required.
+                </ng-container>
+                <ng-container *ngIf="signupForm.controls['phoneNumber'].hasError('pattern')">
+                  Please enter a valid phone number.
+                </ng-container>
+                <ng-container *ngIf="signupForm.controls['phoneNumber'].hasError('length')">
+                  Phone number should be exactly 10 digits.
+                </ng-container>
+              </mat-error>
+            </mat-form-field>
 
-          <section style="min-width: 190px; padding: auto">
-            <!-- Sign Up form -->
-            <form [formGroup]="signupForm" (ngSubmit)="onSubmit()" *ngIf="!response || response !== 'User created successfully'">
-              <!-- Name input -->
-              <mat-form-field style="width: 100%">
-                <mat-label>Name</mat-label>
-                <input type="text" matInput formControlName="name" required />
-              </mat-form-field>
+            <!-- Email input with validation -->
+            <mat-form-field style="width: 100%" class="flds">
+              <mat-label>Email ID</mat-label>
+              <input type="email" matInput formControlName="email" class="flds" (input)="validateEmail()" required />
+              <mat-error *ngIf="signupForm.controls['email'].touched && signupForm.controls['email'].invalid">
+                Please enter a valid email address.
+              </mat-error>
+            </mat-form-field>
 
-              <!-- Phone number input with validation -->
-              <mat-form-field style="width: 100%">
-                <mat-label style="padding-left: 35px; font-size: 17px">Phone no</mat-label>
-                <div class="prefix-container">
-                  <span matPrefix>+91</span>
-                  <input matInput type="tel" formControlName="phoneNumber" />
-                </div>
-                <mat-error *ngIf="signupForm.controls['phoneNumber'].touched && signupForm.controls['phoneNumber'].invalid">
-                  <ng-container *ngIf="signupForm.controls['phoneNumber'].hasError('required')">
-                    Phone number is required.
-                  </ng-container>
-                  <ng-container *ngIf="signupForm.controls['phoneNumber'].hasError('pattern')">
-                    Please enter a valid phone number.
-                  </ng-container>
-                  <ng-container *ngIf="signupForm.controls['phoneNumber'].hasError('length')">
-                    Phone number should be exactly 10 digits.
-                  </ng-container>
-                </mat-error>
-              </mat-form-field>
-
-              <!-- Email input with validation -->
-              <mat-form-field style="width: 100%">
-                <mat-label>Email ID</mat-label>
-                <input type="email" matInput formControlName="email" required />
-                <mat-error *ngIf="signupForm.controls['email'].touched && signupForm.controls['email'].invalid">
-                  Please enter a valid email address.
-                </mat-error>
-              </mat-form-field>
-
-              <!-- Password input with show/hide button -->
-              <mat-form-field style="width: 100%">
-                <mat-label>Password</mat-label>
-                <input type="{{ hidePassword ? 'password' : 'text' }}" matInput formControlName="password" required />
+            <!-- Password input with show/hide button -->
+            <mat-form-field style="width: 100%" class="flds">
+              <mat-label>Password</mat-label>
+              <input type="{{ hidePassword ? 'password' : 'text' }}" matInput formControlName="password" class="flds"
+                required />
                 <button mat-icon-button matSuffix (click)="togglePasswordVisibility()">
                   <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
-              </mat-form-field>
+              <mat-error *ngIf="signupForm.controls['password'].touched && signupForm.controls['password'].invalid">
+                <ng-container *ngIf="signupForm.controls['password'].hasError('required')">
+                  Password is required.
+                </ng-container>
+                <ng-container *ngIf="signupForm.controls['password'].hasError('pattern')">
+                  <p class="password-error">Password should contain at least 8 characters, 1 uppercase letter, 1 lowercase letter, 1 number and 1
+                    special character.</p>
+                </ng-container>
+              </mat-error>
+            </mat-form-field>
 
-              <!-- Re-enter password input with validation -->
-              <mat-form-field style="width: 100%">
-                <mat-label>Re-enter Password</mat-label>
-                <input type="password" matInput formControlName="repassword" />
-                <mat-error *ngIf="signupForm.controls['repassword'].touched && signupForm.controls['repassword'].invalid">
-                  Passwords do not match.
-                </mat-error>
-              </mat-form-field>
+            <!-- Re-enter password input with validation -->
+            <mat-form-field style="width: 100%">
+              <mat-label>Re-enter Password</mat-label>
+              <input type="password" matInput formControlName="repassword" />
+              <mat-error *ngIf="signupForm.controls['repassword'].touched && signupForm.controls['repassword'].invalid">
+                Passwords do not match.
+              </mat-error>
+            </mat-form-field>
 
-              <!-- Submit button -->
-              <div class="button-container">
-                <button mat-raised-button type="submit" class="custom-button" [disabled]="signupForm.invalid">
-                  Sign Up
-                </button>
-              </div>
-            </form>
-          </section>
+            <!-- Submit button -->
+            <div class="button-container">
+              <button mat-raised-button type="submit" class="custom-button" [disabled]="signupForm.invalid"
+                [ngClass]="{ 'disabled-btn': signupForm.invalid }">
+                Sign Up
+              </button>
+            </div>
+          </form>
+        </section>
+      </div>
+      <footer class="jio-footer">
+        <div class="footer-container">
+          <div class="image-container">
+            <img _ngcontent-xad-c1="" alt="Powered by Jio" class="center" height="25"
+              src="../assets/jio-powered-by.png" />
+          </div>
+          <div class="links-container">
+            <a class="link" target="_blank" href="https://hellojiodiag.blob.core.windows.net/eva/PrivacyPolicy.pdf">
+              Privacy
+            </a>
+            <a class="link" target="_blank" href="https://hellojiodiag.blob.core.windows.net/eva/TnC.pdf">
+              Terms &amp; Conditions
+            </a>
+          </div>
         </div>
-      </section>
-    </section>
-  </section>
-</section>
+      </footer>
+    </div>
+  </div>
+</div>

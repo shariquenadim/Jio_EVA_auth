@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
-import { FormBuilder, FormGroup, Validators, FormControl, FormGroupDirective, NgForm } from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
@@ -88,54 +87,50 @@ export class LoginComponent implements OnInit {
         .subscribe((response: any) => {
           if (response.message === 'An otp has been sent to your email') {
             this.showOTP = true;
-            this.startTimer(); // Start the timer when OTP is sent
+            this.startTimer(); 
             console.log("OTP sent to email");
           } else if (response.token) {
             console.log("Login successful");
           }
-          this.loginForm.reset();
         });
     }
   }
 
   onOtpSubmit() {
-    let otp = this.otpForm.value.otp;
-    otp = otp.toString();
-    console.log("OTP submitted:", otp);
+    if (this.otpForm.valid) {
+      let otp = this.otpForm.value.otp;
+      otp = otp.toString();
+      console.log("OTP submitted:", otp);
 
-    const otpCredentials = {
-      otp: otp
-    };
+      const otpCredentials = {
+        otp: otp
+      };
 
-    this.http.post('http://localhost:3000/otp', otpCredentials, { withCredentials: true })
-      .pipe(
-        catchError(error => {
-          console.error('OTP verification failed');
-          console.error(error);
-          this.errorMessage = 'OTP verification failed';
-          throw error;
-        })
-      )
-      .subscribe((response: any) => {
-        console.log('OTP verification successful');
-        console.log(response);
-        if (response.token) {
-          console.log("OTP verification successful. Login complete.");
-          console.log('Received token:', response.token);
-          localStorage.setItem('token', response.token);
-          console.log('Token stored in localStorage');
-          this.router.navigate(['/dashboard']);
-        }
-      });
+      this.http.post('http://localhost:3000/otp', otpCredentials, { withCredentials: true })
+        .pipe(
+          catchError(error => {
+            console.error('OTP verification failed');
+            console.error(error);
+            this.errorMessage = 'OTP verification failed';
+            throw error;
+          })
+        )
+        .subscribe((response: any) => {
+          console.log('OTP verification successful');
+          console.log(response);
+          if (response.token) {
+            console.log("OTP verification successful. Login complete.");
+            console.log('Received token:', response.token);
+            localStorage.setItem('token', response.token);
+            console.log('Token stored in localStorage');
+            this.router.navigate(['/dashboard']);
+          }
+        });
 
-    this.otpForm.reset();
-    this.showOTP = false;
-    clearInterval(this.timer); // Clear the timer when OTP is submitted
-  }
-
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    const isSubmitted = form && form.submitted;
-    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+      this.otpForm.reset();
+      this.showOTP = false;
+      clearInterval(this.timer); // Clear the timer when OTP is submitted
+    }
   }
 
   startTimer() {
@@ -158,6 +153,7 @@ export class LoginComponent implements OnInit {
     this.displayTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     this.checkRedText(); // Check if the timer text should be red
   }
+
   checkRedText() {
     this.isRedText = this.remainingTime <= 10;
   }

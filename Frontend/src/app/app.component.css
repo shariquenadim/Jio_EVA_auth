@@ -1,0 +1,9 @@
+::ng-deep * {
+  margin: 0;
+  padding: 0;
+}
+.app-comp{
+  height: 100%;
+  margin:0;
+}
+  

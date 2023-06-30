@@ -1,72 +1,67 @@
-/* You can add global styles to this file, and also import other style files */
-
-html,
-body {
-  height: 100%;
-  width: 100%;
-}
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #212529;
-  text-align: left;
-  /* background-color: #fff; */
-}
-body {
-  font-family: jio-medium, sans-serif;
-  padding: 0;
-  /* background: #fff; */
-  -webkit-font-smoothing: antialiased;
-  width: 100%;
-  height: 100%;
+.background-image.login {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   overflow: hidden;
+  z-index: -1;
 }
 
-.alcx {
-  background-size: 100%;
-  height: 100%;
-  background-position: bottom left;
-}
-
-.alcc {
-  min-height: 90%;
-  max-height: 90%;
-  overflow-y: auto;
-  width: 100%;
+.background-image.login:before {
+  content: "";
+  background-image: url("../../../assets/login-bg.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
   position: absolute;
-  top: 18%;
-  left: 50%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.container {
+  position: relative;
+  padding: 10px;
+  overflow-y: auto;
+  height: 99%;
 }
 .alc {
-  width: 25%;
-  position: absolute;
+  width: 27%;
+  position: relative;
+  height: auto;
+  max-height: 90%;
+  margin: 0 auto;
+  padding: 10px;
+  margin-bottom: auto;
+  margin-left: 50%;
 }
 
 .jioeva_logo {
-  width: 10rem;
-  margin: 1rem auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 35%;
+  margin: 0.5rem auto;
 }
-img {
-  vertical-align: middle;
-  border-style: none;
+
+.jioeva_logo img {
   max-width: 100%;
-  max-height: 100%;
+  height: auto;
 }
 
 form {
   display: block;
   margin-top: 0em;
 }
+.login-frm{
+  padding: 5px;
+}
 .remember-forgot {
   display: flex;
   align-items: center;
   color: #707070;
-  /* justify-content: space-between; */
 }
 
 .remember-checkbox {
@@ -75,21 +70,6 @@ form {
   display: flex;
   align-items: center;
   color: #707070 !important;
-}
-.remember-checkbox .mat-checkbox-frame::after {
-  background-color: blue; /* Change the color of the tick here */
-}
-
-.remember-checkbox .mat-checkbox-frame {
-  border-color: #707070 !important;
-}
-
-.remember-checkbox .mat-checkbox-background {
-  background-color: #707070 !important;
-}
-
-.remember-checkbox .mat-checkbox-inner-container {
-  background-color: #707070 !important;
 }
 
 .forgot-link {
@@ -132,8 +112,8 @@ a {
 }
 
 .authenticate-layout-container {
-  position: relative; /* Make the container relative */
-  min-height: 100vh; /* Ensure the container takes up at least the full viewport height */
+  position: relative;
+  min-height: 100vh;
 }
 
 .button-container {
@@ -144,11 +124,61 @@ a {
 .custom-button {
   background-color: #fcb542 !important;
   color: white !important;
-  border-radius: 50px; /* Adjust the value as needed to achieve the desired semi-circle shape */
-  width: 95%;
+  border-radius: 50px;
+  width: 65%;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  padding: 20px;
+}
+.disabled-btn {
+  background-color: #e0e0e0 !important;
+  color: #b1b1b1 !important;
+  border-radius: 50px;
+  width: 65%;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  padding: 20px;
 }
 
 .red-text {
   color: red;
+}
+.footer-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.footer-container .link {
+  color: #696868;
+  font-size: 13px;
+  margin-left: 1%;
+  text-decoration: none;
+}
+
+.jio-footer {
+  position: fixed;
+  width: 100%;
+  background-color: transparent;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  bottom: 0;
+}
+
+.image-container {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  flex: 1;
+}
+
+.links-container {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+  margin-right: 2%;
 }
 

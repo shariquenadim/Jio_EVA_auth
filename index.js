@@ -1,8 +1,7 @@
 const express = require("express");
-const app = express();
+const app = express(); // Define the 'app' variable
 const mongoose = require("mongoose");
 const cookieParser = require('cookie-parser')
-const routes = require("./router");
 
 // Set up body parser
 app.use(express.json());
@@ -27,7 +26,8 @@ mongoose.connection.once("open", () => {
 });
 
 // Set up routes
-app.use("/", routes);
+const router = require("./router");
+app.use("/", router);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

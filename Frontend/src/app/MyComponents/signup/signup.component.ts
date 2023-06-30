@@ -17,6 +17,7 @@ export class SignupComponent implements OnInit {
   response: any;
   hidePassword: boolean = true;
 
+
   constructor(private formBuilder: FormBuilder, private http: HttpClient) { }
 
   ngOnInit() {
@@ -24,9 +25,24 @@ export class SignupComponent implements OnInit {
       name: ['', Validators.required],
       phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      password: ['', [Validators.required, Validators.pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\w\s]).{8,}$/)]],
       repassword: ['', [Validators.required, this.passwordMatchValidator]]
     });
+  }
+
+  validatePhoneNumber(event: any) {
+    const charCode = event.which ? event.which : event.keyCode;
+    if (charCode < 48 || charCode > 57) {
+      event.preventDefault();
+    }
+  }
+  validateEmail() {
+    const emailFormControl = this.signupForm.get('email');
+    if (emailFormControl && emailFormControl.value) {
+      const pattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/;
+      const isValid = pattern.test(emailFormControl.value);
+      emailFormControl.setErrors(isValid ? null : { invalidEmail: true });
+    }
   }
 
   onSubmit() {
@@ -96,6 +112,7 @@ export class SignupComponent implements OnInit {
       console.log('Form is invalid');
     }
   }
+
 
   passwordMatchValidator(control: FormControl) {
     const password = control.root.get('password');
