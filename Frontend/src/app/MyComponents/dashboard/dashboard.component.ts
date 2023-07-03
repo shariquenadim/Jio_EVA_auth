@@ -35,12 +35,16 @@ export class DashboardComponent implements OnInit {
   selectedReviews: string[] = [];
   isReviewOptionSelected(option: string): boolean {
     return this.selectedReviews.includes(option);
-  };  
+  };
+  avgRating: number = 0;
+  numReviews: number = 0;
+
 
   constructor(private http: HttpClient, private router: Router, private snackBar: MatSnackBar) { }
 
   ngOnInit() {
     this.getUser();
+    this.fetchCityReviews();
   }
 
   getUser() {
@@ -87,12 +91,12 @@ export class DashboardComponent implements OnInit {
   // Function to search cities based on the query
   searchCities() {
     if (this.query) {
-      console.log('Performing city search with query:', this.query);
+      // console.log('Performing city search with query:', this.query);
 
       this.http.get<any[]>('http://localhost:3000/cities/search', { params: { q: this.query } }).subscribe(
         (response) => {
           // Search successful, assign results to recommendations array
-          console.log('Search results:', response);
+          // console.log('Search results:', response);
           this.recommendations = response;
           this.isSuggestionListActive = this.recommendations.length > 0;
         },
@@ -122,17 +126,19 @@ export class DashboardComponent implements OnInit {
     this.selectedState = stateName;
     this.isSuggestionListActive = false;
     this.toggleButtonVisibility();
+    this.fetchCityReviews();
   }
 
   openCityDetailsPopup() {
     this.http.get<any>('http://localhost:3000/cities/details', { params: { city: this.selectedCity, state: this.selectedState } }).subscribe(
       (response) => {
         // Fetch successful, assign city details
-        console.log('City details:', response);
+        // console.log('City details:', response);
         this.cityPopulation = response.population;
         this.cityLatitude = response.latitude;
         this.cityLongitude = response.longitude;
         this.isCityDetailsPopupOpen = true;
+        this.fetchCityReviews();
       },
       (error) => {
         // Handle error during fetching city details
@@ -174,7 +180,7 @@ export class DashboardComponent implements OnInit {
 
   toggleReviewOption(option: string) {
     const index = this.selectedReviews.indexOf(option);
-  
+
     if (index > -1) {
       this.selectedReviews.splice(index, 1);
       console.log(`Removed option: ${option}`);
@@ -188,13 +194,13 @@ export class DashboardComponent implements OnInit {
     const userId = this.user?._id;
     const cityId = this.recommendations[0]?.id;
     const rating = this.selectedRating;
-  
+
     // Check if the required data is available
     if (!userId || !cityId || !rating) {
       console.error('Missing required data for review submission.');
       return;
     }
-  
+
     const reviewData = {
       userId,
       cityId,
@@ -202,12 +208,12 @@ export class DashboardComponent implements OnInit {
       cityName: this.recommendations[0]?.name,
       reviews: this.selectedReviews
     };
-  
+
     // Make an HTTP POST request to the '/reviews' endpoint
     this.http.post<any>('http://localhost:3000/reviews', reviewData, { withCredentials: true })
       .subscribe(
         (response) => {
-          console.log('Review submitted successfully:', response);
+          // console.log('Review submitted successfully:', response);
           // Show a snackbar or notification
           this.snackBar.open('Thank You! Review Submitted.', 'Close', {
             duration: 4000, // Duration in milliseconds
@@ -223,6 +229,29 @@ export class DashboardComponent implements OnInit {
           // Handle error or show error message
         }
       );
-  }  
+  }
+
+  // Function to fetch city reviews from the server
+  fetchCityReviews() {
+    const city = this.selectedCity;
+    if (!city) {
+      console.error('No city selected. Cannot fetch reviews.');
+      return;
+    }
+
+    // Make an HTTP GET request to the server to fetch city reviews
+    this.http.get<any>(`http://localhost:3000/cities/reviews`, { params: { city } })
+      .subscribe(
+        (response) => {
+          // Update the component properties with the received data
+          this.avgRating = parseFloat(response.avgRating);
+          this.numReviews = response.uniqueUsers;
+        },
+        (error) => {
+          console.error('Error occurred while fetching city reviews:', error);
+          // Handle error or show error message
+        }
+      );
+  }
 
 }

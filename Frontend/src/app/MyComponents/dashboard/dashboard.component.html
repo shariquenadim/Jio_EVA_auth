@@ -66,12 +66,12 @@
         <div class="info-label">Longitude:</div>
         <div class="info-value">{{ cityLongitude }}</div>
       </div>
-      <div class="info-item">
+      <div class="info-item" *ngIf="avgRating !== null && numReviews !== null && avgRating !== 0 && numReviews !== 0">
         <div class="info-label">Rating:</div>
-        <div class="info-value">3.5 / 5</div>
+        <div class="info-value">{{ avgRating % 1 !== 0 ? avgRating.toFixed(1) : avgRating.toFixed(0) }} / 5.00</div>
         &nbsp; &nbsp;
         <div class="info-label">Reviews:</div>
-        <div class="info-value">115</div>
+        <div class="info-value">{{ numReviews }}</div>
       </div>
     </div>
     <div class="popup-actions">
@@ -91,14 +91,22 @@
     </div>
     <div class="review">
       <div class="review-opt" *ngIf="showReview">
-        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Transportation') }" (click)="toggleReviewOption('Transportation')">Transportation</button>
-        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Housing') }" (click)="toggleReviewOption('Housing')">Housing</button>
-        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Weather') }" (click)="toggleReviewOption('Weather')">Weather</button>
-        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Water') }" (click)="toggleReviewOption('Water')">Water</button>
-        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Electricity') }" (click)="toggleReviewOption('Electricity')">Electricity</button>
-        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Hygiene') }" (click)="toggleReviewOption('Hygiene')">Hygiene</button>
-        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Safety') }" (click)="toggleReviewOption('Safety')">Safety</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Transportation') }"
+          (click)="toggleReviewOption('Transportation')">Transportation</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Housing') }"
+          (click)="toggleReviewOption('Housing')">Housing</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Weather') }"
+          (click)="toggleReviewOption('Weather')">Weather</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Water') }"
+          (click)="toggleReviewOption('Water')">Water</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Electricity') }"
+          (click)="toggleReviewOption('Electricity')">Electricity</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Hygiene') }"
+          (click)="toggleReviewOption('Hygiene')">Hygiene</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Safety') }"
+          (click)="toggleReviewOption('Safety')">Safety</button>
       </div>
-      <button class="review-btn" [disabled]="!isRatingSelected" [ngClass]="{'disabled-button': !isRatingSelected}" (click)="submitReview()">Submit</button>
-    </div>    
+      <button class="review-btn" [disabled]="!isRatingSelected" [ngClass]="{'disabled-button': !isRatingSelected}"
+        (click)="submitReview()">Submit</button>
+    </div>
   </div>

@@ -39,7 +39,7 @@ async function searchCities(req, res) {
       }
     });
 
-    console.log('Elasticsearch response:', body);
+    // console.log('Elasticsearch response:', body);
 
     if (!body) {
       console.error('Empty response received from Elasticsearch.');
@@ -88,47 +88,91 @@ function getCityDetails(req, res) {
 
 // Function for submitting a review
 async function submitReview(req, res) {
-    try {
-      const { userId, cityId, rating, cityName, reviews } = req.body;
-  
-      if (!userId || !cityId || !rating || !cityName || !reviews) {
-        return res.status(400).json({ error: 'Missing required parameters.' });
-      }
-  
-      const client = new Client({ node: 'http://localhost:9200' });
-      const indexName = 'reviews';
-  
-      const { body: updateResponse } = await client.update({
-        index: indexName,
-        id: `${userId}_${cityId}`,
-        body: {
-          doc: {
-            userId,
-            cityId,
-            rating,
-            cityName,
-            reviews
-          },
-          upsert: {
-            userId,
-            cityId,
-            rating,
-            cityName,
-            reviews
-          }
-        }
-      });
-  
-      res.json({ message: 'Review submitted successfully.' });
-    } catch (error) {
-      console.error('Error occurred while submitting review:', error);
-      res.status(500).json({ error: 'An error occurred while submitting the review.' });
+  try {
+    const { userId, cityId, rating, cityName, reviews } = req.body;
+
+    if (!userId || !cityId || !rating || !cityName || !reviews) {
+      return res.status(400).json({ error: 'Missing required parameters.' });
     }
+
+    const client = new Client({ node: 'http://localhost:9200' });
+    const indexName = 'reviews';
+
+    const { body: updateResponse } = await client.update({
+      index: indexName,
+      id: `${userId}_${cityId}`,
+      body: {
+        doc: {
+          userId,
+          cityId,
+          rating: Number(rating), 
+          cityName,
+          reviews
+        },
+        upsert: {
+          userId,
+          cityId,
+          rating: Number(rating), 
+          cityName,
+          reviews
+        }
+      }
+    });
+
+    res.json({ message: 'Review submitted successfully.' });
+    // console.log("submited")
+  } catch (error) {
+    console.error('Error occurred while submitting review:', error);
+    res.status(500).json({ error: 'An error occurred while submitting the review.' });
   }
+}
   
+// Function for getting average rating and number of reviews for a city
+async function getCityReviews(req, res) {
+  try {
+    const { city } = req.query;
+
+    if (!city) {
+      return res.status(400).json({ error: 'Missing city parameter.' });
+    }
+
+    const client = new Client({ node: 'http://localhost:9200' });
+    const indexName = 'reviews';
+
+    const body = await client.search({
+      index: indexName,
+      body: {
+        size: 0,
+        query: {
+          term: { "cityName.keyword": city }
+        },
+        aggs: {
+          avgRating: { avg: { field: 'rating' } },
+          uniqueUsers: { cardinality: { field: 'userId.keyword' } }
+        }
+      }
+    });
+
+    // console.log('Elasticsearch response:', body);
+
+    if (!body || !body.aggregations) {
+      console.error('Empty or invalid response received from Elasticsearch.');
+      return res.status(500).json({ error: 'An error occurred while fetching city reviews.' });
+    }
+
+    const avgRating = body.aggregations.avgRating.value || 0.0;
+    const uniqueUsers = body.aggregations.uniqueUsers.value;
+
+    res.json({ avgRating: avgRating.toFixed(1), uniqueUsers });
+  } catch (error) {
+    console.error('Error occurred while fetching city reviews:', error);
+    res.status(500).json({ error: 'An error occurred while fetching city reviews.' });
+  }
+}
 
 module.exports = {
   searchCities,
   getCityDetails,
-  submitReview
+  submitReview,
+  getCityReviews
 };

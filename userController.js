@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const User = require("./models/user");
+const fs = require('fs');
 
 const JWT_SECRET = "8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmpgXwovR9fp6ryDIoGRM8EPHAB6iHsc0fb";
 
@@ -48,11 +49,14 @@ const signup = async (req, res, next) => {
             },
         });
 
+        const htmlTemplate = fs.readFileSync('views/verification-email.html', 'utf-8');
+        const formattedHtml = htmlTemplate.replace('{{verificationUrl}}', url);
+
         await transporter.sendMail({
             from: "infomotiveofficial@gmail.com",
             to: email,
             subject: "Verify your Email ID for JIO EVA",
-            html: `Click <strong><a href="${url}">here</a></strong> to verify your email address. <br> Please don't share this email with others.`,
+            html: formattedHtml,
         });
 
         res.status(201).json({ status: 201, message: "User created successfully" });
@@ -107,11 +111,14 @@ const login = async (req, res, next) => {
                 },
             });
 
+            const htmlTemplate = fs.readFileSync('views/otp-email.html', 'utf-8');
+            const formattedHtml = htmlTemplate.replace('{{otp}}', otp);
+
             await transporter.sendMail({
                 from: "infomotiveofficial@gmail.com",
                 to: email,
                 subject: "OTP For Login in Jio EVA",
-                html: `Your new OTP code is <strong>${otp}</strong>. This OTP is active only for 2 minutes.`,
+                html: formattedHtml,
             });
 
             res.status(200).json({ message: "An otp has been sent to your email" });
@@ -128,10 +135,10 @@ const logout = (req, res) => {
         res.clearCookie("token");
         res.json("Logged out successfully");
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: "An error occurred during logout" });
+        console.error(err);
+        res.status(500).json({ message: "An error occurred during logout" });
     }
-  };
+};
 
 // Get current user function
 const getCurrentUser = async (req, res, next) => {
@@ -139,29 +146,29 @@ const getCurrentUser = async (req, res, next) => {
         const token = req.cookies.token;
 
         if (!token) {
-          return res.status(401).json("Unauthorized");
+            return res.status(401).json("Unauthorized");
         }
-    
+
         const decoded = jwt.verify(token, JWT_SECRET);
-    
+
         if (!decoded) {
-          return res.status(401).json("Unauthorized");
+            return res.status(401).json("Unauthorized");
         }
-    
+
         const { email } = decoded;
-    
+
         const user = await User.findOne({ email });
-    
+
         if (!user) {
-          return res.status(401).json("User does not exist");
+            return res.status(401).json("User does not exist");
         }
-    
+
         res.json(user);
     } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: "An error occurred while fetching user details" });
+        console.error(err);
+        res.status(500).json({ message: "An error occurred while fetching user details" });
     }
-  };
+};
 
 
 // Exporting the functions

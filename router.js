@@ -59,5 +59,8 @@ router.get('/cities/details', cityController.getCityDetails);
 // Endpoint for submitting a review
 router.post('/reviews', cityController.submitReview);
 
+// Endpoint for getting city reviews and avg ratings
+router.get('/cities/reviews', cityController.getCityReviews);
+
 
 module.exports = router;
