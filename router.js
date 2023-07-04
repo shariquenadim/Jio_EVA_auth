@@ -46,6 +46,9 @@ router.get("/verify-email", emailController.verifyEmail);
 // OTP verification route
 router.post('/otp', emailController.verifyOTP);
 
+// forget password route
+router.post('/forget-password', emailController.forgetPassword);
+
 
 // Load data into Elasticsearch
 loadData();

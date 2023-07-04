@@ -13,6 +13,7 @@ import { MatListModule } from '@angular/material/list';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
+import { ForgetPasswordComponent } from './MyComponents/forget-password/forget-password.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { MatIconModule } from '@angular/material/icon';
     LoginComponent,
     SignupComponent,
     DashboardComponent,
+    ForgetPasswordComponent,
   ],
   imports: [
     BrowserModule,

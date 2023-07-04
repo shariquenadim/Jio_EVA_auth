@@ -54,7 +54,7 @@
             <div class="remember-forgot">
               <mat-checkbox formControlName="rememberMe" class="remember-checkbox" style="color: #707070"
                 (change)="onRememberMeChange($event)">Remember me</mat-checkbox>
-              <a class="forgot-link" href="#">Forgot password?</a>
+              <a class="forgot-link" routerLink="/forget">Forgot password?</a>
             </div>
 
             <!-- Sign In button (disables until OTP is entered) -->

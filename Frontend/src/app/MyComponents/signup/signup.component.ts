@@ -30,9 +30,19 @@ export class SignupComponent implements OnInit {
     });
   }
 
+  onPaste(event: any) {
+    event.preventDefault();
+  }
+  
   validatePhoneNumber(event: any) {
     const charCode = event.which ? event.which : event.keyCode;
-    if (charCode < 48 || charCode > 57) {
+    const input = event.target.value + String.fromCharCode(charCode);
+    
+    if (input.length === 1 && (charCode < 54 || charCode > 57)) {
+      event.preventDefault();
+    }
+    
+    if (input.length > 1 && (charCode < 48 || charCode > 57)) {
       event.preventDefault();
     }
   }
