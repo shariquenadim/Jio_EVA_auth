@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const User = require("./models/user");
+const User = require("../models/user");
 const fs = require('fs');
 
 const JWT_SECRET = "8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmpgXwovR9fp6ryDIoGRM8EPHAB6iHsc0fb";

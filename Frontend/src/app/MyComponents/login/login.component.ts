@@ -10,22 +10,29 @@ import { Router } from '@angular/router';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  loginForm!: FormGroup;
-  otpForm!: FormGroup;
+  loginForm: FormGroup;
+  otpForm: FormGroup;
   showOTP: boolean = false;
-  remainingTime: number = 120;
-  displayTime: string = '';
-  emailNotVerified: boolean = false;
   errorMessage: string = '';
-  timer: any;
+  emailVerificationMessage: string = '';
+  displayTime: string = '';
   isRedText: boolean = false;
+  remainingTime: number = 120;
+  emailNotVerified: boolean = false;
+  timer: any;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private http: HttpClient,
-    private router: Router
-  ) { }
-
+  constructor(private formBuilder: FormBuilder, private http: HttpClient, private router: Router) {
+    this.loginForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
+      rememberMe: [false]
+    });
+  
+    this.otpForm = this.formBuilder.group({
+      otp: ['']  
+    });
+  }
+  
   ngOnInit() {
     // Check if user is already logged in
     const token = localStorage.getItem('token');
@@ -34,14 +41,16 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/dashboard']);
       return;
     }
+  
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       rememberMe: [false]
     });
-
+  
+    // Initialize the otpForm without validators initially
     this.otpForm = this.formBuilder.group({
-      otp: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(10)]]
+      otp: ['']
     });
   }
 
@@ -51,7 +60,6 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
-    console.log("Form clicked");
     if (this.loginForm.valid && !this.showOTP) {
       const email = this.loginForm.value.email;
       const password = this.loginForm.value.password;
@@ -62,8 +70,6 @@ export class LoginComponent implements OnInit {
         password: password,
         rememberMe: rememberMe
       };
-
-      console.log("Valid form submitted");
 
       this.http.post('http://localhost:3000/login', credentials, { withCredentials: true })
         .pipe(
@@ -87,20 +93,29 @@ export class LoginComponent implements OnInit {
         .subscribe((response: any) => {
           if (response.message === 'An otp has been sent to your email') {
             this.showOTP = true;
-            this.startTimer(); 
-            console.log("OTP sent to email");
+            this.toggleOTPField();
+            this.startTimer();
+            this.otpForm.reset();
           } else if (response.token) {
             console.log("Login successful");
           }
         });
+    } else if (this.loginForm.valid && this.showOTP) {
+      this.onOtpSubmit();
     }
   }
-
+  getOtpControl() {
+    return this.otpForm.get('otp');
+  }
   onOtpSubmit() {
     if (this.otpForm.valid) {
       let otp = this.otpForm.value.otp;
       otp = otp.toString();
-      console.log("OTP submitted:", otp);
+
+      this.otpForm.reset();
+      this.showOTP = false;
+      this.toggleOTPField();
+      clearInterval(this.timer);
 
       const otpCredentials = {
         otp: otp
@@ -126,21 +141,27 @@ export class LoginComponent implements OnInit {
             this.router.navigate(['/dashboard']);
           }
         });
-
-      this.otpForm.reset();
-      this.showOTP = false;
-      clearInterval(this.timer); // Clear the timer when OTP is submitted
     }
   }
 
+  toggleOTPField() {
+    const otpControl = this.otpForm.get('otp');
+    if (this.showOTP) {
+      otpControl?.setValidators([Validators.required, Validators.minLength(6), Validators.maxLength(10)]);
+    } else {
+      otpControl?.clearValidators();
+    }
+    otpControl?.updateValueAndValidity();
+  }
+
   startTimer() {
-    this.remainingTime = 120; // Reset the remaining time to 120 seconds
-    this.updateDisplayTime(); // Update the initial display time
+    this.remainingTime = 120;
+    this.updateDisplayTime();
     this.timer = setInterval(() => {
       if (this.remainingTime > 0) {
         this.remainingTime--;
         this.updateDisplayTime();
-        this.checkRedText(); // Check if the timer text should be red
+        this.checkRedText();
       } else {
         clearInterval(this.timer);
       }
@@ -151,7 +172,7 @@ export class LoginComponent implements OnInit {
     const minutes = Math.floor(this.remainingTime / 60);
     const seconds = this.remainingTime % 60;
     this.displayTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    this.checkRedText(); // Check if the timer text should be red
+    this.checkRedText();
   }
 
   checkRedText() {

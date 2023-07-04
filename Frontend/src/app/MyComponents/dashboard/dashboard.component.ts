@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, Renderer2 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -10,6 +10,7 @@ interface User {
   email: string;
   phone: string;
 }
+
 
 @Component({
   selector: 'app-dashboard',
@@ -38,9 +39,11 @@ export class DashboardComponent implements OnInit {
   };
   avgRating: number = 0;
   numReviews: number = 0;
+  otherOptionText: string = '';
+  selectedCityId: string = '';
 
 
-  constructor(private http: HttpClient, private router: Router, private snackBar: MatSnackBar) { }
+  constructor(private http: HttpClient, private router: Router, private snackBar: MatSnackBar, private renderer: Renderer2) { }
 
   ngOnInit() {
     this.getUser();
@@ -120,10 +123,11 @@ export class DashboardComponent implements OnInit {
     // Hide button if query is empty or suggestion list is active
   }
 
-  selectCity(cityName: string, stateName: string) {
+  selectCity(cityId: string, cityName: string, stateName: string) {
     this.query = cityName;
     this.selectedCity = cityName;
     this.selectedState = stateName;
+    this.selectedCityId = cityId;
     this.isSuggestionListActive = false;
     this.toggleButtonVisibility();
     this.fetchCityReviews();
@@ -179,36 +183,54 @@ export class DashboardComponent implements OnInit {
   }
 
   toggleReviewOption(option: string) {
-    const index = this.selectedReviews.indexOf(option);
-
-    if (index > -1) {
-      this.selectedReviews.splice(index, 1);
-      console.log(`Removed option: ${option}`);
+    if (option === 'Other') {
+      if (this.isReviewOptionSelected('Other')) {
+        // Deselect the "Other" option
+        const index = this.selectedReviews.indexOf('Other');
+        if (index > -1) {
+          this.selectedReviews.splice(index, 1);
+        }
+      } else {
+        // Select the "Other" option
+        this.selectedReviews.push('Other');
+      }
     } else {
-      this.selectedReviews.push(option);
-      console.log(`Added option: ${option}`);
+      const index = this.selectedReviews.indexOf(option);
+  
+      if (index > -1) {
+        this.selectedReviews.splice(index, 1);
+        console.log(`Removed option: ${option}`);
+      } else {
+        this.selectedReviews.push(option);
+        console.log(`Added option: ${option}`);
+      }
     }
   }
-
+  
   submitReview() {
     const userId = this.user?._id;
-    const cityId = this.recommendations[0]?.id;
+    const cityId = this.selectedCityId; 
     const rating = this.selectedRating;
-
+  
     // Check if the required data is available
     if (!userId || !cityId || !rating) {
       console.error('Missing required data for review submission.');
       return;
     }
-
+  
     const reviewData = {
       userId,
       cityId,
       rating,
-      cityName: this.recommendations[0]?.name,
+      cityName: this.selectedCity, // Use selectedCity instead of recommendations[0]?.name
       reviews: this.selectedReviews
     };
-
+  
+    // If 'Other' option is selected and the otherOptionText is not empty, add it to the reviews
+    if (this.isReviewOptionSelected('Other') && this.otherOptionText.trim() !== '') {
+      reviewData.reviews.push(this.otherOptionText);
+    }
+  
     // Make an HTTP POST request to the '/reviews' endpoint
     this.http.post<any>('http://localhost:3000/reviews', reviewData, { withCredentials: true })
       .subscribe(
@@ -223,6 +245,7 @@ export class DashboardComponent implements OnInit {
           this.selectedReviews = [];
           this.showReview = false;
           this.isRatingSelected = false;
+          this.otherOptionText = '';
         },
         (error) => {
           console.error('Error occurred while submitting the review:', error);
@@ -230,6 +253,7 @@ export class DashboardComponent implements OnInit {
         }
       );
   }
+ 
 
   // Function to fetch city reviews from the server
   fetchCityReviews() {

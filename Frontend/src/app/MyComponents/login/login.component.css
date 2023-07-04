@@ -36,6 +36,7 @@
   padding: 10px;
   margin-bottom: auto;
   margin-left: 50%;
+  margin-top: 5%;
 }
 
 .jioeva_logo {
@@ -143,7 +144,7 @@ a {
 }
 
 .red-text {
-  color: red;
+  color: red !important;
 }
 .footer-container {
   display: flex;
@@ -182,3 +183,7 @@ a {
   margin-right: 2%;
 }
 
+.timer{
+  color: #707070;
+  font-size: 14px;
+}

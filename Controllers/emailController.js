@@ -1,7 +1,7 @@
 // emailController.js
 
 const jwt = require("jsonwebtoken");
-const User = require("./models/user");
+const User = require("../models/user");
 const path = require("path");
 const fs = require("fs");
 
@@ -24,7 +24,7 @@ exports.verifyEmail = async (req, res, next) => {
     await user.save();
 
     // Read the HTML file and send it as the response
-    const filePath = path.join(__dirname, "views/email-verification-success.html");
+    const filePath = path.join(__dirname, "../views/email-verification-success.html");
     const html = fs.readFileSync(filePath, "utf-8");
     res.send(html.replace("{{email}}", email));
   } catch (err) {
@@ -50,7 +50,7 @@ exports.verifyOTP = async (req, res) => {
   // Check if OTP is expired (2-minute expiration time)
   const now = Date.now();
   const expirationTime = 2 * 60 * 1000; // 2 minutes
-  if (now - req.cookies.otp_time > expirationTime) {
+  if (now - parseInt(req.cookies.otp_time) > expirationTime) {
     console.log("OTP expired");
     return res.status(401).json({ message: 'OTP expired' });
   }

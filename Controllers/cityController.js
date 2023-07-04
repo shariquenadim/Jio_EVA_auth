@@ -1,5 +1,5 @@
 const { Client } = require('@elastic/elasticsearch');
-const citiesData = require('./cities.json');
+const citiesData = require('../elastic loading delete data/cities.json');
 
 // Function for performing full-text search
 async function searchCities(req, res) {

@@ -32,6 +32,24 @@
               </mat-error>
             </mat-form-field>
 
+            <form [formGroup]="otpForm">
+              <!-- OTP input (displayed when showOTP is true) -->
+              <mat-form-field style="width: 99%" *ngIf="showOTP">
+                <mat-label>Unique OTP</mat-label>
+                <input type="text" matInput formControlName="otp" required />
+                <mat-error
+                  *ngIf="otpForm.get('otp')?.invalid && (otpForm.get('otp')?.dirty || otpForm.get('otp')?.touched)">
+                  OTP is required or has an invalid format.
+                </mat-error>
+              </mat-form-field>
+            </form>
+
+            <!-- Countdown timer -->
+          <div class="timer" [ngClass]="{'red-text': isRedText && showOTP}">
+            <p *ngIf="showOTP">Time Remaining: {{ displayTime }}</p>
+            <p *ngIf="isRedText && showOTP">Time Over for OTP</p>
+          </div>
+
             <!-- Remember me checkbox -->
             <div class="remember-forgot">
               <mat-checkbox formControlName="rememberMe" class="remember-checkbox" style="color: #707070"
@@ -39,43 +57,22 @@
               <a class="forgot-link" href="#">Forgot password?</a>
             </div>
 
-            <!-- Sign In button -->
+            <!-- Sign In button (disables until OTP is entered) -->
             <div class="button-container">
               <button mat-raised-button type="submit" class="custom-button"
-                [disabled]="!loginForm.valid && !showOTP" [ngClass]="{ 'disabled-btn': loginForm.invalid }">Sign In</button>
+                [disabled]="!showOTP && (!loginForm.valid || otpForm.get('otp')?.invalid)"
+                [ngClass]="{ 'disabled-btn': !showOTP && (loginForm.invalid || otpForm.get('otp')?.invalid) }">
+                {{ showOTP ? 'Verify OTP' : 'Sign In' }}
+              </button>
             </div>
           </form>
 
           <!-- Display error message -->
           <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
 
-          <!-- OTP form (displayed when showOTP is true) -->
-          <form [formGroup]="otpForm" *ngIf="showOTP">
-            <mat-form-field style="width: 90%; padding-top:0.7cm;">
-              <mat-label>Unique OTP</mat-label>
-              <input type="text" matInput formControlName="otp" />
-              <mat-error
-                *ngIf="otpForm.get('otp')?.invalid && (otpForm.get('otp')?.dirty || otpForm.get('otp')?.touched)">
-                OTP is required or has an invalid format.
-              </mat-error>
-            </mat-form-field>
-
-            <!-- Countdown timer -->
-            <div class="timer" [ngClass]="{'red-text': isRedText}">
-              <p>Time Remaining: {{ displayTime }}</p>
-              <p *ngIf="isRedText">Time Over for OTP</p>
-            </div>
-
-            <!-- Verify OTP button -->
-            <div class="button-container">
-              <button mat-raised-button type="button" class="custom-button" (click)="onOtpSubmit()">Verify
-                OTP</button>
-            </div>
-          </form>
-
           <!-- Display email verification message -->
-          <div *ngIf="emailNotVerified">
-            <p>Email address not verified. Please check your email and verify your account.</p>
+          <div *ngIf="emailVerificationMessage" class="email-verification-message">
+            {{ emailVerificationMessage }}
           </div>
 
           <div class="nu">

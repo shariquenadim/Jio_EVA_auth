@@ -344,7 +344,7 @@
   align-items: center;
   justify-content: center;
   background-color: #202125;
-  padding: 30px;
+  padding: 20px;
   border: 1.5px solid #53565b;
   border-radius: 15px;
   animation: fade-in 0.3s ease-in-out;
@@ -353,7 +353,7 @@
 .city-details-popup .popup-content .popup-heading {
   margin: 10px auto;
   font-family: "Ubuntu", sans-serif;
-  font-size: 48px;
+  font-size: 38px;
   font-weight: bold;
   text-align: center;
   letter-spacing: 5px;
@@ -363,7 +363,7 @@
 }
 
 .city-details-popup .popup-content h2 {
-  font-size: 30px;
+  font-size: 25px;
   font-weight: 700;
   color: #d6e6ec;
   margin-bottom: 10px;
@@ -374,7 +374,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 3px;
 }
 
 .city-details-popup .popup-content .popup-info .info-item {
@@ -485,8 +485,8 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  padding: 8px;
-  max-width: 400px;
+  padding-bottom: 8px;
+  max-width: 450px;
 }
 
 .review .opt {
@@ -506,6 +506,21 @@
 .isSelected {
   background-color:#d6e6ec !important;
   color:#202125 !important;
+}
+.review .text-custm{
+  display:flex;
+  width: 100%;
+}
+.review .other-input{
+  background-color: transparent;
+  border: 1px solid #595959;
+  border-radius: 25px;
+  color: #d6e6ec;
+  padding: 15px;
+  font-weight: 700;
+  margin: 5px;
+  width: 100%;
+  outline: none;
 }
 
 @keyframes fade-in {

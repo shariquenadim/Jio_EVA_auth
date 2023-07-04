@@ -35,7 +35,7 @@
         <div class="suggestion-list" *ngIf="isSuggestionListActive">
           <mat-list>
             <mat-list-item *ngFor="let city of recommendations" class="list-item"
-              (click)="selectCity(city.name, city.state)">
+              (click)="selectCity(city.id, city.name, city.state)">
               <p><i class="material-icons city-icon">location_city</i>
                 {{ city.name }}</p>
             </mat-list-item>
@@ -105,6 +105,11 @@
           (click)="toggleReviewOption('Hygiene')">Hygiene</button>
         <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Safety') }"
           (click)="toggleReviewOption('Safety')">Safety</button>
+        <button class="opt" [ngClass]="{ 'isSelected': isReviewOptionSelected('Other') }"
+          (click)="toggleReviewOption('Other')">Other</button>
+      </div>
+      <div *ngIf="isReviewOptionSelected('Other')" class="text-custm">
+        <input type="text" class="other-input" [(ngModel)]="otherOptionText" placeholder="Please specify" #otherInput />
       </div>
       <button class="review-btn" [disabled]="!isRatingSelected" [ngClass]="{'disabled-button': !isRatingSelected}"
         (click)="submitReview()">Submit</button>

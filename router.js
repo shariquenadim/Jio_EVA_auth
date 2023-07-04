@@ -1,10 +1,10 @@
 const express = require("express");
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const loadData = require('./loader');
-const userController = require("./userController");
-const cityController = require('./cityController');
-const emailController = require('./emailController');
+const loadData = require('../Jio_EVA_auth/elastic loading delete data/loader');
+const userController = require("../Jio_EVA_auth/Controllers/userController");
+const cityController = require('../Jio_EVA_auth/Controllers/cityController');
+const emailController = require('../Jio_EVA_auth/Controllers/emailController');
 
 const router = express.Router();
 
