@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <!-- Required meta tags -->
     <meta charset="UTF-8">
 </head>
-<body>
-    <div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
-        <div style="margin:50px auto;width:70%;padding:20px 0">
-            <div style="border-bottom:1px solid #eee">
-                <a href="" style="font-size:1.4em;color:#fcb84c;text-decoration:none;font-weight:700">Jio EVA</a>
-            </div>
-            <p style="font-size:1.1em">Hi,</p>
-            <p>Your OTP for Login to Jio EVA portal. OTP is valid for <strong>2 minutes.</strong></p>
-            <h2 style="background:#eda93c;margin:0 auto;width:max-content;font-weight:700;letter-spacing:3px;padding:0 10px;color:#fff;border-radius:4px;cursor:pointer" onclick="copyOTP()">{{otp}}</h2>
-            <p style="font-size:0.8em;color:#777;text-align:center">Remember to keep this OTP confidential and do not share it with others.</p>
-            <hr style="border:none;border-top:1px solid #eee" />
-            <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-                <p>Jio EVA</p>
-                <p>info.eva@jio.com</p>
-                <p>India</p>
+
+<body style="margin: 0;">
+    <div style="background-color: #eda93c; padding: 20px; max-width:600px;">
+        <div style="font-family: Helvetica,Arial,sans-serif;max-width:90%;overflow:auto;line-height:2; background-color: aliceblue; border-radius: 10px;margin: 20px;">
+            <div style="margin: 20px auto;width: 90%;padding:20px 0">
+                <div style="border-bottom:1px solid #c6c4c4">
+                    <a href="" style="font-size:1.4em;color:#fcb84c;text-decoration:none;font-weight:700">Jio EVA</a>
+                </div>
+                <p style="font-size:1.1em">Hi,</p>
+                <p>Your OTP for Login to Jio EVA portal. OTP is valid for <strong>2 minutes.</strong></p>
+                <h2 style="background:#eda93c;margin:0 auto;width:max-content;font-weight:700;letter-spacing:3px;padding:0 10px;color:#fff;border-radius:4px;cursor:pointer"
+                    onclick="copyOTP()">{{otp}}</h2>
+                <p style="font-size:0.8em;color:#777;text-align:center">Remember to keep this OTP confidential and do
+                    not share it with others.</p>
+                <hr style="border:none;border-top:1px solid #eee" />
+                <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+                    <p>Jio EVA</p>
+                    <p>info.eva@jio.com</p>
+                    <p>India</p>
+                </div>
             </div>
         </div>
     </div>
@@ -26,12 +32,13 @@
         function copyOTP() {
             const otpElement = document.querySelector('h2');
             const otp = otpElement.innerText;
-            navigator.clipboard.writeText(otp).then(function() {
+            navigator.clipboard.writeText(otp).then(function () {
                 alert('OTP copied to clipboard');
-            }, function() {
+            }, function () {
                 alert('Failed to copy OTP');
             });
         }
     </script>
 </body>
+
 </html>

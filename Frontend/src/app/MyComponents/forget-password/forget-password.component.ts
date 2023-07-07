@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-forget-password',
@@ -9,7 +11,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class ForgetPasswordComponent implements OnInit {
   forgetpasswordForm!: FormGroup;
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private http: HttpClient,
+    private snackBar: MatSnackBar
+  ) { }
 
   ngOnInit() {
     this.forgetpasswordForm = this.formBuilder.group({
@@ -24,5 +30,40 @@ export class ForgetPasswordComponent implements OnInit {
       const isValid = pattern.test(emailFormControl.value);
       emailFormControl.setErrors(isValid ? null : { invalidEmail: true });
     }
+  }
+
+  onSubmit() {
+    if (this.forgetpasswordForm.valid) {
+      const email = this.forgetpasswordForm.value.email;
+
+      this.http.post<any>('http://localhost:3000/forget-password', { email }).subscribe(
+        response => {
+          console.log("response:", response);
+
+          if (response?.message === 'User not found') {
+            this.openSnackBar('User not found. Please register first.', 4000);
+          } else if (response?.message === 'Password reset email sent successfully') {
+            this.openSnackBar('A reset password link is sent to your registered email.', 5000);
+            setTimeout(() => {
+              window.location.href = '/login';
+            }, 5000);
+          } else {
+            this.openSnackBar('An error occurred. Please try again.', 4000);
+          }
+        },
+        error => {
+          console.error(error);
+          if (error.status === 401) {
+            this.openSnackBar('User not found. Please register first.', 4000);
+          } else {
+            this.openSnackBar('An error occurred. Please try again.', 4000);
+          }
+        }
+      );
+    }
+  }
+
+  openSnackBar(message: string, duration: number) {
+    this.snackBar.open(message, 'Close', { duration });
   }
 }

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -21,18 +22,18 @@ export class LoginComponent implements OnInit {
   emailNotVerified: boolean = false;
   timer: any;
 
-  constructor(private formBuilder: FormBuilder, private http: HttpClient, private router: Router) {
+  constructor(private formBuilder: FormBuilder, private http: HttpClient, private router: Router, private snackBar: MatSnackBar) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       rememberMe: [false]
     });
-  
+
     this.otpForm = this.formBuilder.group({
-      otp: ['']  
+      otp: ['']
     });
   }
-  
+
   ngOnInit() {
     // Check if user is already logged in
     const token = localStorage.getItem('token');
@@ -41,13 +42,13 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/dashboard']);
       return;
     }
-  
+
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required],
       rememberMe: [false]
     });
-  
+
     // Initialize the otpForm without validators initially
     this.otpForm = this.formBuilder.group({
       otp: ['']
@@ -78,12 +79,14 @@ export class LoginComponent implements OnInit {
             console.error(error);
             if (error.status === 400) {
               const errorMessage = error.error;
-              if (errorMessage === 'User not found.') {
-                this.errorMessage = 'User not found.';
+              if (errorMessage === 'User not found') {
+                this.openSnackBar('User not found. Please SignUp first.', 5000, 'error-message');
               } else if (errorMessage === 'Email address not verified') {
-                this.emailNotVerified = true;
-              } else if (errorMessage === 'Invalid email or password') {
-                this.errorMessage = 'Invalid email or password';
+                this.openSnackBar('Email address not verified.', 4000, 'warning-message');
+              } else if (errorMessage === 'Invalid password') {
+                this.openSnackBar('Invalid password.', 40000, 'error-message');
+              } else if (errorMessage === 'You are using an old password.') {
+                this.openSnackBar('You are using an old password.', 4000, 'warning-message');
               }
             }
 
@@ -91,19 +94,24 @@ export class LoginComponent implements OnInit {
           })
         )
         .subscribe((response: any) => {
-          if (response.message === 'An otp has been sent to your email') {
+          if (response.message === 'An OTP has been sent to your email') {
             this.showOTP = true;
             this.toggleOTPField();
             this.startTimer();
             this.otpForm.reset();
-          } else if (response.token) {
+            this.emailVerificationMessage = '';
+          } else if (response.message === 'Login successful') {
             console.log("Login successful");
+            console.log(response.token);
+            localStorage.setItem('token', response.token);
+            this.router.navigate(['/dashboard']);
           }
         });
     } else if (this.loginForm.valid && this.showOTP) {
       this.onOtpSubmit();
     }
   }
+
   getOtpControl() {
     return this.otpForm.get('otp');
   }
@@ -142,6 +150,13 @@ export class LoginComponent implements OnInit {
           }
         });
     }
+  }
+
+  openSnackBar(message: string, duration: number, messageType: string): void {
+    this.snackBar.open(message, 'Close', {
+      duration: duration,
+      panelClass: [messageType]
+    });
   }
 
   toggleOTPField() {

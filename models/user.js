@@ -1,4 +1,3 @@
-
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
@@ -21,34 +20,43 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  oldPassword: {
+    type: String,
+  },
   emailVerified: {
     type: Boolean,
-    default: false
+    default: false,
+  },
+});
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(this.password, salt);
+
+    this.password = hash;
+    next();
+  } catch (err) {
+    next(err);
   }
 });
 
-userSchema.pre('save', function (next) {
-  const user = this;
 
-  if (!user.isModified('password')) return next();
+userSchema.methods.comparePassword = function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
-  bcrypt.genSalt(10, (err, salt) => {
-    if (err) return next(err);
+userSchema.methods.comparePasswordWithOld = function (candidatePassword) {
+  if (!this.oldPassword) {
+    // Return a resolved promise without performing any comparison
+    return Promise.resolve(false);
+  }
 
-    bcrypt.hash(user.password, salt, (err, hash) => {
-      if (err) return next(err);
-
-      user.password = hash;
-      next();
-    });
-  });
-});
-
-userSchema.methods.comparePassword = function (candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
-    if (err) return cb(err);
-    cb(null, isMatch);
-  });
+  return bcrypt.compare(candidatePassword, this.oldPassword);
 };
 
 module.exports = mongoose.model('User', userSchema);

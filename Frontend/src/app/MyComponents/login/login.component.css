@@ -188,3 +188,18 @@ a {
   color: #707070;
   font-size: 14px;
 }
+
+::ng-deep .messageType .error-message {
+  background-color: red;
+  color: white;
+}
+
+::ng-deep .messageType .warning-message {
+  background-color: rgb(255, 196, 0);
+  color: black;
+}
+
+::ng-deep .messageType .success-message {
+  background-color: green;
+  color: white;
+}

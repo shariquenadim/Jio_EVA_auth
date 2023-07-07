@@ -14,6 +14,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { ForgetPasswordComponent } from './MyComponents/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './MyComponents/reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { ForgetPasswordComponent } from './MyComponents/forget-password/forget-p
     SignupComponent,
     DashboardComponent,
     ForgetPasswordComponent,
+    ResetPasswordComponent,
   ],
   imports: [
     BrowserModule,

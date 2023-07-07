@@ -47,8 +47,10 @@ router.get("/verify-email", emailController.verifyEmail);
 router.post('/otp', emailController.verifyOTP);
 
 // forget password route
-router.post('/forget-password', emailController.forgetPassword);
+router.post('/forget-password', userController.forgetPassword);
 
+// reset password route
+router.post('/reset-password', userController.resetPassword);
 
 // Load data into Elasticsearch
 loadData();

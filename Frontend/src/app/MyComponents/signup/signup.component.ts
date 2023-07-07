@@ -29,10 +29,6 @@ export class SignupComponent implements OnInit {
       repassword: ['', [Validators.required, this.passwordMatchValidator]]
     });
   }
-
-  onPaste(event: any) {
-    event.preventDefault();
-  }
   
   validatePhoneNumber(event: any) {
     const charCode = event.which ? event.which : event.keyCode;
@@ -92,15 +88,15 @@ export class SignupComponent implements OnInit {
         .subscribe(
           (response: any) => {
             // Handle the success response from the backend
-            console.log('Signup success:', response);
-            console.log('Response:', response);
+            // console.log('Signup success:', response);
+            // console.log('Response:', response);
             // Access the status code
-            console.log('Status code:', response.status);
+            // console.log('Status code:', response.status);
             this.response = response;
 
             // Reset the form if status code is 201
             if (response && response === 'User created successfully') {
-              console.log("Inside if block")
+              // console.log("Inside if block")
               this.signupForm.reset();
               this.response = response.message;
             }

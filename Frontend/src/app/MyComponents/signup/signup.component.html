@@ -49,7 +49,7 @@
               <mat-label style="padding-left: 35px; font-size: 17px">Phone no</mat-label>
               <div class="prefix-container">
                 <span matPrefix>+91</span>
-                <input matInput type="tel" formControlName="phoneNumber" class="flds" (keypress)="validatePhoneNumber($event)" />
+                <input matInput type="tel" formControlName="phoneNumber" class="flds" (keypress)="validatePhoneNumber($event)"  (cut)="$event.preventDefault()" (copy)="$event.preventDefault()" (paste)="$event.preventDefault()" />
               </div>
               <mat-error *ngIf="signupForm.controls['phoneNumber'].touched && signupForm.controls['phoneNumber'].invalid">
                 <ng-container *ngIf="signupForm.controls['phoneNumber'].hasError('required')">
@@ -67,7 +67,7 @@
             <!-- Email input with validation -->
             <mat-form-field style="width: 100%" class="flds">
               <mat-label>Email ID</mat-label>
-              <input type="email" matInput formControlName="email" class="flds" (input)="validateEmail()" required />
+              <input type="email" matInput formControlName="email" class="flds" (input)="validateEmail()" (cut)="$event.preventDefault()" (copy)="$event.preventDefault()" (paste)="$event.preventDefault()" required />
               <mat-error *ngIf="signupForm.controls['email'].touched && signupForm.controls['email'].invalid">
                 Please enter a valid email address.
               </mat-error>
@@ -76,8 +76,7 @@
             <!-- Password input with show/hide button -->
             <mat-form-field style="width: 100%" class="flds">
               <mat-label>Password</mat-label>
-              <input type="{{ hidePassword ? 'password' : 'text' }}" matInput formControlName="password" class="flds"
-                required />
+              <input type="{{ hidePassword ? 'password' : 'text' }}" matInput formControlName="password" class="flds" (cut)="$event.preventDefault()" (copy)="$event.preventDefault()" (paste)="$event.preventDefault()" required />
                 <button mat-icon-button matSuffix (click)="togglePasswordVisibility()">
                   <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                 </button>
