@@ -78,6 +78,9 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
+            "exclude": [
+              "**/*.html"
+            ],
             "polyfills": [
               "zone.js",
               "zone.js/testing"

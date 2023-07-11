@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
+
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',

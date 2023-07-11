@@ -45,12 +45,6 @@ export class LoginComponent implements OnInit {
       return;
     }
 
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
-      rememberMe: [false]
-    });
-
     // Initialize the otpForm without validators initially
     this.otpForm = this.formBuilder.group({
       otp: ['']

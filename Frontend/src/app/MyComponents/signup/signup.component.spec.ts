@@ -4,6 +4,8 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { SignupComponent } from './signup.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('SignupComponent', () => {
   let component: SignupComponent;
@@ -12,7 +14,7 @@ describe('SignupComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [SignupComponent],
-      imports: [ReactiveFormsModule, HttpClientModule, MatFormFieldModule, MatInputModule],
+      imports: [ReactiveFormsModule, HttpClientModule, MatFormFieldModule, MatInputModule, MatIconModule,BrowserAnimationsModule],
       providers: [FormBuilder, HttpClient]
     }).compileComponents();
   });

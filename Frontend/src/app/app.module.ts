@@ -17,6 +17,7 @@ import { ForgetPasswordComponent } from './MyComponents/forget-password/forget-p
 import { ResetPasswordComponent } from './MyComponents/reset-password/reset-password.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
+
 @NgModule({
   declarations: [
     AppComponent,

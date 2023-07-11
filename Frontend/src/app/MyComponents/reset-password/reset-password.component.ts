@@ -52,7 +52,7 @@ export class ResetPasswordComponent implements OnInit {
         return;
       }
 
-      this.isButtonDisabled = true; // Disable the button during the process
+      this.isButtonDisabled = true;
 
       // Make the API call to the reset password endpoint with the token
       this.http.post<any>('http://localhost:3000/reset-password', { token: this.token, newPassword, confirmPassword }).subscribe(
