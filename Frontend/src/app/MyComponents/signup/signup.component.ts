@@ -4,8 +4,6 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
-
-
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -16,6 +14,7 @@ export class SignupComponent implements OnInit {
   signupForm!: FormGroup;
   response: any;
   hidePassword: boolean = true;
+  isButtonDisabled = false;
 
 
   constructor(private formBuilder: FormBuilder, private http: HttpClient) { }
@@ -53,6 +52,7 @@ export class SignupComponent implements OnInit {
 
   onSubmit() {
     console.log('Submitting signup form');
+    this.isButtonDisabled = true;
 
     if (this.signupForm.valid) {
       console.log('Form is valid');
@@ -100,6 +100,7 @@ export class SignupComponent implements OnInit {
               this.signupForm.reset();
               this.response = response.message;
             }
+            this.isButtonDisabled = false;
           },
           (error: HttpErrorResponse) => {
             // Handle the error response from the backend
@@ -112,6 +113,7 @@ export class SignupComponent implements OnInit {
             } else {
               this.response = { status: error.status, message: 'An error occurred during signup. Please try again later.' };
             }
+            this.isButtonDisabled = false;
           }
         );
     } else {

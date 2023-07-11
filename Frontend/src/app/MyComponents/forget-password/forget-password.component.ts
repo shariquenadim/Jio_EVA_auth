@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class ForgetPasswordComponent implements OnInit {
   forgetpasswordForm!: FormGroup;
+  isButtonDisabled = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -33,6 +34,7 @@ export class ForgetPasswordComponent implements OnInit {
   }
 
   onSubmit() {
+    this.isButtonDisabled = true;
     if (this.forgetpasswordForm.valid) {
       const email = this.forgetpasswordForm.value.email;
 
@@ -42,21 +44,26 @@ export class ForgetPasswordComponent implements OnInit {
 
           if (response?.message === 'User not found') {
             this.openSnackBar('User not found. Please register first.', 4000);
+            this.isButtonDisabled = false;
           } else if (response?.message === 'Password reset email sent successfully') {
-            this.openSnackBar('A reset password link is sent to your registered email.', 5000);
+            this.openSnackBar('A reset password link is sent to your registered email.', 4000);
             setTimeout(() => {
               window.location.href = '/login';
             }, 5000);
+            this.isButtonDisabled = true; 
           } else {
             this.openSnackBar('An error occurred. Please try again.', 4000);
+            this.isButtonDisabled = false;
           }
         },
         error => {
           console.error(error);
           if (error.status === 401) {
             this.openSnackBar('User not found. Please register first.', 4000);
+            this.isButtonDisabled = false;
           } else {
             this.openSnackBar('An error occurred. Please try again.', 4000);
+            this.isButtonDisabled = false;
           }
         }
       );

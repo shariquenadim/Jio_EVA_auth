@@ -102,9 +102,12 @@
 
             <!-- Submit button -->
             <div class="button-container">
-              <button mat-raised-button type="submit" class="custom-button" [disabled]="signupForm.invalid"
-                [ngClass]="{ 'disabled-btn': signupForm.invalid }">
-                Sign Up
+              <button mat-raised-button type="submit" class="custom-button" [disabled]="signupForm.invalid || isButtonDisabled"
+                [ngClass]="{ 'disabled-btn': signupForm.invalid || isButtonDisabled }">
+                <span *ngIf="isButtonDisabled">
+                  <mat-spinner diameter="24" color="#ffff" class="load-spin"></mat-spinner>
+                </span>
+                <span *ngIf="!isButtonDisabled">Sign Up</span>
               </button>
             </div>
           </form>

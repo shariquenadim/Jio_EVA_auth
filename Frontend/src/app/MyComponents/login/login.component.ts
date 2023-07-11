@@ -5,6 +5,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -21,6 +22,7 @@ export class LoginComponent implements OnInit {
   remainingTime: number = 120;
   emailNotVerified: boolean = false;
   timer: any;
+  isButtonDisabled = false;
 
   constructor(private formBuilder: FormBuilder, private http: HttpClient, private router: Router, private snackBar: MatSnackBar) {
     this.loginForm = this.formBuilder.group({
@@ -62,6 +64,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit() {
     if (this.loginForm.valid && !this.showOTP) {
+      this.isButtonDisabled = true;
       const email = this.loginForm.value.email;
       const password = this.loginForm.value.password;
       const rememberMe = this.loginForm.value.rememberMe;
@@ -84,10 +87,11 @@ export class LoginComponent implements OnInit {
               } else if (errorMessage === 'Email address not verified') {
                 this.openSnackBar('Email address not verified.', 4000, 'warning-message');
               } else if (errorMessage === 'Invalid password') {
-                this.openSnackBar('Invalid password.', 40000, 'error-message');
+                this.openSnackBar('Invalid password.', 4000, 'error-message');
               } else if (errorMessage === 'You are using an old password.') {
                 this.openSnackBar('You are using an old password.', 4000, 'warning-message');
               }
+              this.isButtonDisabled = false;
             }
 
             throw error;
@@ -96,10 +100,12 @@ export class LoginComponent implements OnInit {
         .subscribe((response: any) => {
           if (response.message === 'An OTP has been sent to your email') {
             this.showOTP = true;
+            this.openSnackBar('An OTP has been sent to your email', 4000, 'success-message');
             this.toggleOTPField();
             this.startTimer();
             this.otpForm.reset();
             this.emailVerificationMessage = '';
+            this.isButtonDisabled = false;
           } else if (response.message === 'Login successful') {
             console.log("Login successful");
             console.log(response.token);
@@ -115,6 +121,7 @@ export class LoginComponent implements OnInit {
   getOtpControl() {
     return this.otpForm.get('otp');
   }
+
   onOtpSubmit() {
     if (this.otpForm.valid) {
       let otp = this.otpForm.value.otp;
@@ -149,6 +156,7 @@ export class LoginComponent implements OnInit {
             this.router.navigate(['/dashboard']);
           }
         });
+      this.isButtonDisabled = false;
     }
   }
 

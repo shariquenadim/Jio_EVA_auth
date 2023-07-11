@@ -15,6 +15,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
 import { ForgetPasswordComponent } from './MyComponents/forget-password/forget-password.component';
 import { ResetPasswordComponent } from './MyComponents/reset-password/reset-password.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { ResetPasswordComponent } from './MyComponents/reset-password/reset-pass
     ScrollingModule,
     MatSnackBarModule,
     MatIconModule,
+    MatProgressSpinnerModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

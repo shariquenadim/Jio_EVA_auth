@@ -60,9 +60,12 @@
             <!-- Sign In button (disables until OTP is entered) -->
             <div class="button-container">
               <button mat-raised-button type="submit" class="custom-button"
-                [disabled]="!showOTP && (!loginForm.valid || otpForm.get('otp')?.invalid)"
-                [ngClass]="{ 'disabled-btn': !showOTP && (loginForm.invalid || otpForm.get('otp')?.invalid) }">
-                {{ showOTP ? 'Verify OTP' : 'Sign In' }}
+                [disabled]="!showOTP && (!loginForm.valid || otpForm.get('otp')?.invalid) || isButtonDisabled"
+                [ngClass]="{ 'disabled-btn': !showOTP && (loginForm.invalid || otpForm.get('otp')?.invalid) || isButtonDisabled }">
+                <span *ngIf="isButtonDisabled">
+                  <mat-spinner diameter="24" color="#ffff" class="load-spin"></mat-spinner>
+                </span>
+                <span *ngIf="!isButtonDisabled">{{ showOTP ? 'Verify OTP' : 'Sign In' }}</span>
               </button>
             </div>
           </form>

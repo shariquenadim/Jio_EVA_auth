@@ -16,3 +16,6 @@ html,body{
     background-color: transparent;
 }
 
+.mat-mdc-progress-spinner {
+    --mdc-circular-progress-active-indicator-color: #ffffffdb !important;
+}
