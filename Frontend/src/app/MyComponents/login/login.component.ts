@@ -4,7 +4,7 @@ import { catchError } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -87,12 +87,12 @@ export class LoginComponent implements OnInit {
               }
               this.isButtonDisabled = false;
             }
-
-            throw error;
+            // throw error;
+            return of(null);
           })
         )
         .subscribe((response: any) => {
-          if (response.message === 'An OTP has been sent to your email') {
+          if (response && response.message === 'An OTP has been sent to your email') {
             this.showOTP = true;
             this.openSnackBar('An OTP has been sent to your email', 4000, 'success-message');
             this.toggleOTPField();
@@ -100,9 +100,9 @@ export class LoginComponent implements OnInit {
             this.otpForm.reset();
             this.emailVerificationMessage = '';
             this.isButtonDisabled = false;
-          } else if (response.message === 'Login successful') {
-            console.log("Login successful");
-            console.log(response.token);
+          } else if (response && response.message === 'Login successful') {
+            // console.log("Login successful");
+            // console.log(response.token);
             localStorage.setItem('token', response.token);
             this.router.navigate(['/dashboard']);
           }
@@ -136,18 +136,19 @@ export class LoginComponent implements OnInit {
             console.error('OTP verification failed');
             console.error(error);
             this.errorMessage = 'OTP verification failed';
-            throw error;
+            // throw error;
+            return of(null);
           })
         )
         .subscribe((response: any) => {
-          console.log('OTP verification successful');
-          console.log(response);
-          if (response.token) {
-            console.log("OTP verification successful. Login complete.");
-            console.log('Received token:', response.token);
+          if (response && response.token) {
+            console.log('OTP verification successful');
+            console.log(response);
             localStorage.setItem('token', response.token);
-            console.log('Token stored in localStorage');
             this.router.navigate(['/dashboard']);
+          } else {
+            console.log('OTP verification failed');
+            this.errorMessage = 'OTP verification failed';
           }
         });
       this.isButtonDisabled = false;

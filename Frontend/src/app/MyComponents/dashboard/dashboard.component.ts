@@ -44,7 +44,6 @@ export class DashboardComponent implements OnInit {
 
 
   constructor(private http: HttpClient, private router: Router, private snackBar: MatSnackBar, private renderer: Renderer2) { }
-
   ngOnInit() {
     this.getUser();
     this.fetchCityReviews();
@@ -58,7 +57,7 @@ export class DashboardComponent implements OnInit {
         },
         (error) => {
           console.error('Error retrieving user:', error);
-          // Redirect to login if user is not logged in
+          this.user = undefined;
           this.router.navigate(['/login']);
         }
       );
@@ -74,9 +73,6 @@ export class DashboardComponent implements OnInit {
 
           // Navigate to the login page
           this.router.navigate(['/login']);
-        },
-        (error) => {
-          console.error('Error during logout:', error);
         }
       );
   }
@@ -85,28 +81,28 @@ export class DashboardComponent implements OnInit {
     this.isDropdownOpen = !this.isDropdownOpen;
   }
   @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    const dropdown = document.querySelector('.profile-dropdown');
-    if (!dropdown || !dropdown.contains(event.target as Node)) {
-      this.isDropdownOpen = false;
+onDocumentClick(event: MouseEvent) {
+  const dropdown = document.querySelector('.profile-dropdown');
+  const dropdownContent = document.querySelector('.dropdown-content');
+  
+  if (dropdown && dropdownContent) {
+    if (dropdown.contains(event.target as Node) || dropdownContent.contains(event.target as Node)) {
+      return;
     }
   }
+  this.isDropdownOpen = false;
+}
   // Function to search cities based on the query
   searchCities() {
-    if (this.query) {
-      // console.log('Performing city search with query:', this.query);
-
+    if (this.query !== '') {
       this.http.get<any[]>('http://localhost:3000/cities/search', { params: { q: this.query } }).subscribe(
         (response) => {
-          // Search successful, assign results to recommendations array
-          // console.log('Search results:', response);
           this.recommendations = response;
           this.isSuggestionListActive = this.recommendations.length > 0;
         },
         (error) => {
-          // Handle error during search
           console.error('Error occurred while searching for cities:', error);
-          this.recommendations = []; // Reset recommendations array
+          this.recommendations = [];
           this.isSuggestionListActive = false;
         }
       );
@@ -136,8 +132,6 @@ export class DashboardComponent implements OnInit {
   openCityDetailsPopup() {
     this.http.get<any>('http://localhost:3000/cities/details', { params: { city: this.selectedCity, state: this.selectedState } }).subscribe(
       (response) => {
-        // Fetch successful, assign city details
-        // console.log('City details:', response);
         this.cityPopulation = response.population;
         this.cityLatitude = response.latitude;
         this.cityLongitude = response.longitude;
@@ -145,7 +139,6 @@ export class DashboardComponent implements OnInit {
         this.fetchCityReviews();
       },
       (error) => {
-        // Handle error during fetching city details
         console.error('Error occurred while fetching city details:', error);
       }
     );
@@ -156,9 +149,11 @@ export class DashboardComponent implements OnInit {
   }
 
   goToCity() {
-    // Handle the action when the user clicks the "GO" button
-    console.log('Navigating to city:', this.selectedCity, ', state:', this.selectedState);
-    this.openCityDetailsPopup();
+    const city = encodeURIComponent(this.selectedCity);
+    const state = encodeURIComponent(this.selectedState);
+    const mapUrl = `https://www.google.com/maps/search/?api=1&query=${city},${state}`;
+  
+    window.open(mapUrl, '_blank');
   }
 
   updateRating(rating: number) {
@@ -169,11 +164,12 @@ export class DashboardComponent implements OnInit {
     this.showReview = rating < 5;
   }
 
-  getStarStyles(index: number): string {
-    if (index <= this.selectedRating) {
-      return `color: #fc0; text-shadow: #fc0 0 0 20px;`;
+  getStarStyles(rating: number): string {
+    if (rating === this.selectedRating) {
+      return 'color: #fc0; text-shadow: #fc0 0 0 20px;';
+    } else {
+      return '';
     }
-    return '';
   }
 
   openMap() {
@@ -253,7 +249,6 @@ export class DashboardComponent implements OnInit {
         }
       );
   }
- 
 
   // Function to fetch city reviews from the server
   fetchCityReviews() {

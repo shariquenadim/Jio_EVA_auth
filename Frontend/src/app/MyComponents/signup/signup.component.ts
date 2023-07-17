@@ -4,7 +4,6 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
-
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
@@ -15,7 +14,6 @@ export class SignupComponent implements OnInit {
   signupForm!: FormGroup;
   response: any;
   hidePassword: boolean = true;
-  isButtonDisabled = false;
 
 
   constructor(private formBuilder: FormBuilder, private http: HttpClient) { }
@@ -31,14 +29,15 @@ export class SignupComponent implements OnInit {
   }
   
   validatePhoneNumber(event: any) {
-    const charCode = event.which ? event.which : event.keyCode;
-    const input = event.target.value + String.fromCharCode(charCode);
-    
-    if (input.length === 1 && (charCode < 54 || charCode > 57)) {
-      event.preventDefault();
-    }
-    
-    if (input.length > 1 && (charCode < 48 || charCode > 57)) {
+    const charCode = event.which ?? event.keyCode;
+    const inputValue = event.target.value;
+  
+    if (inputValue.length === 0) {
+      if (charCode < 54 || charCode > 57) {
+        event.preventDefault();
+        return;
+      }
+    } else if (charCode < 48 || charCode > 57) {
       event.preventDefault();
     }
   }
@@ -53,7 +52,6 @@ export class SignupComponent implements OnInit {
 
   onSubmit() {
     console.log('Submitting signup form');
-    this.isButtonDisabled = true;
 
     if (this.signupForm.valid) {
       console.log('Form is valid');
@@ -96,12 +94,11 @@ export class SignupComponent implements OnInit {
             this.response = response;
 
             // Reset the form if status code is 201
-            if (response && response === 'User created successfully') {
+            if (response && response.message === 'User created successfully') {
               // console.log("Inside if block")
               this.signupForm.reset();
               this.response = response.message;
             }
-            this.isButtonDisabled = false;
           },
           (error: HttpErrorResponse) => {
             // Handle the error response from the backend
@@ -114,7 +111,6 @@ export class SignupComponent implements OnInit {
             } else {
               this.response = { status: error.status, message: 'An error occurred during signup. Please try again later.' };
             }
-            this.isButtonDisabled = false;
           }
         );
     } else {
@@ -146,8 +142,8 @@ export class SignupComponent implements OnInit {
     } else {
       // Server-side error
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
-      console.log('Server error response:', error.error);
-      console.dir(error) // Log the server error response for debugging
+      // console.log('Server error response:', error.error);
+      // console.dir(error) 
     }
     console.error(errorMessage, error);
     return throwError(errorMessage);

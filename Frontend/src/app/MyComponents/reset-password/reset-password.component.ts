@@ -34,62 +34,64 @@ export class ResetPasswordComponent implements OnInit {
 
   onSubmit(): void {
     this.isButtonDisabled = true;
+
     if (this.resetForm.valid) {
       const newPassword = this.resetForm.value.password;
       const confirmPassword = this.resetForm.value.repassword;
 
-      // Check if the new password and confirm password match
       if (newPassword !== confirmPassword) {
         this.openSnackBar('Passwords do not match', 'warning-message');
         this.isButtonDisabled = false;
         return;
       }
 
-      // Check if the token is empty or not found
       if (!this.token) {
-        this.openSnackBar('Token not found. Please try again.', 'warning-message');
-        this.isButtonDisabled = false;
+        this.handleTokenNotFound();
         return;
       }
 
-      this.isButtonDisabled = true;
+      const requestPayload = {
+        token: this.token,
+        newPassword: newPassword,
+        confirmPassword: confirmPassword
+      };
 
-      // Make the API call to the reset password endpoint with the token
-      this.http.post<any>('http://localhost:3000/reset-password', { token: this.token, newPassword, confirmPassword }).subscribe(
-        response => {
-          this.handleResetPasswordResponse(response);
-        },
-        (error: HttpErrorResponse) => {
-          this.handleResetPasswordError(error);
-        }
-      );
+      this.http.post('http://localhost:3000/reset-password', requestPayload)
+        .subscribe(
+          (response: any) => {
+            this.handleResetPasswordResponse(response);
+          },
+          (error: HttpErrorResponse) => {
+            this.handleResetPasswordError(error);
+          }
+        );
     }
   }
 
   handleResetPasswordResponse(response: any): void {
     const { message } = response;
 
-    this.openSnackBar(message, 'success-message'); // Password reset successful
+    this.openSnackBar(message, 'success-message');
 
     setTimeout(() => {
       this.router.navigate(['/login']);
-    }, 5000); 
+    }, 5000);
   }
 
   handleResetPasswordError(error: HttpErrorResponse): void {
     if (error.status === 400) {
-      this.openSnackBar(error.error.message, 'warning-message'); // New password cannot be the same as the old password
+      this.openSnackBar(error.error.message, 'warning-message');
     } else if (error.status === 401) {
-      this.openSnackBar(error.error.message, 'error-message'); // Token has expired
+      this.openSnackBar(error.error.message, 'error-message');
     } else if (error.status === 403) {
-      this.openSnackBar(error.error.message, 'warning-message'); // Passwords do not match
+      this.openSnackBar(error.error.message, 'warning-message');
     } else if (error.status === 404) {
-      this.openSnackBar(error.error.message, 'error-message'); // User not found
+      this.openSnackBar(error.error.message, 'error-message');
     } else {
       this.openSnackBar('An error occurred. Please try again.', 'warning-message');
     }
 
-    this.isButtonDisabled = false; 
+    this.isButtonDisabled = false;
   }
 
   togglePasswordVisibility(): void {
@@ -101,5 +103,9 @@ export class ResetPasswordComponent implements OnInit {
       duration: 4000,
       panelClass: messageType
     });
+  }
+  handleTokenNotFound(): void {
+    this.openSnackBar('Token not found', 'warning-message');
+    this.isButtonDisabled = false;
   }
 }

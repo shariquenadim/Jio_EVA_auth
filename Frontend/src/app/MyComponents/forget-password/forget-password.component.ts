@@ -47,9 +47,9 @@ export class ForgetPasswordComponent implements OnInit {
             this.isButtonDisabled = false;
           } else if (response?.message === 'Password reset email sent successfully') {
             this.openSnackBar('A reset password link is sent to your registered email.', 4000);
-            setTimeout(() => {
-              window.location.href = '/login';
-            }, 5000);
+            // setTimeout(() => {
+            //   window.location.href = '/login';
+            // }, 5000);
             this.isButtonDisabled = true; 
           } else {
             this.openSnackBar('An error occurred. Please try again.', 4000);
