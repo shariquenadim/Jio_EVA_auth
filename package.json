@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest"
   },
-  "author": "",
+  "author": "Sharique Nadim",
   "license": "ISC",
   "dependencies": {
     "@elastic/elasticsearch": "^8.8.1",

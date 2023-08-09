@@ -165,7 +165,7 @@ onDocumentClick(event: MouseEvent) {
   }
 
   getStarStyles(rating: number): string {
-    if (rating === this.selectedRating) {
+    if (rating <= this.selectedRating) {
       return 'color: #fc0; text-shadow: #fc0 0 0 20px;';
     } else {
       return '';
