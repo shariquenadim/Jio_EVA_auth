@@ -1,4 +1,10 @@
 # prefix_search_and-rating_system_using_MEAN_stack_and_elasticsearch
+
+Welcome to the SmartCity Companion GitHub repository, a groundbreaking project that combines advanced authentication, rapid city search, user feedback, and sleek containerization to enhance urban living in India.
+
+Description:
+SmartCity Companion is a comprehensive solution utilizing Node.js, Express.js, MongoDB, Bcrypt.js, JWT, Elastic Stack (Elastic Search, Kibana), Docker, Angular, Angular Material, Jasmin, Karma, TypeScript, SCSS, and Redis. This repository houses a two-step OTP authentication system, prefix search for Indian cities, an intelligent rating system, Docker containerization, elegant Angular frontend, and rock-solid unit testing.
+
 🌟 **SmartCity Companion: Revolutionizing Urban Living** 🏙️
 
 Welcome to the **SmartCity Companion** GitHub repository, where innovation meets seamless urban living. Our cutting-edge project brings together a powerful suite of technologies to create a holistic solution for modern cities in India. 🚀
