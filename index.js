@@ -11,7 +11,7 @@ app.use(cookieParser());
 app.use(express.static('public'));
 
 // Connect to MongoDB
-mongoose.connect("mongodb+srv://ryan:ryan@cluster0.zwg3v3g.mongodb.net/?retryWrites=true&w=majority", {
+mongoose.connect("mongodb+srv://ryan:12345@cluster0.h2411gj.mongodb.net/?retryWrites=true&w=majority", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
